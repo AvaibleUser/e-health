@@ -1,4 +1,4 @@
-package org.hospital.frontdoor;
+package org.ehealth.frontdoor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

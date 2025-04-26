@@ -1,0 +1,20 @@
+name: e-health
+
+services:
+  frontdoor:
+    container_name: e-health-frontdoor
+    build:
+      context: ./frontdoor
+      dockerfile: ../Dockerfile
+
+    ports:
+      - 8080:8080
+
+  gatekeeper:
+    container_name: e-health-gatekeeper
+    build:
+      context: ./gatekeeper
+      dockerfile: ../Dockerfile
+
+    ports:
+      - 8081:8081

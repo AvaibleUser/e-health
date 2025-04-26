@@ -1,0 +1,30 @@
+server:
+  port: 8000
+  error:
+    include-message: always
+    include-binding-errors: always
+
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    root: warn
+    org:
+      springframework:
+        web: debug
+        data:
+          rest: debug
+
+spring:
+  application:
+    name: FrontDoor
+
+  jackson:
+    time-zone: UTC
+    mapper:
+      "[ACCEPT_CASE_INSENSITIVE_ENUMS]": true
+
+security:
+  rsa:
+    public-key: classpath:certs/public-key.pem
