@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "security.token.expiration-time",
+      "type": "java.lang.String",
+      "description": "The time that will be alive the token to be used"
+    },
+    {
+      "name": "security.token.time-unit",
+      "type": "java.time.temporal.ChronoUnit",
+      "description": "The unit of time that will be used in expiration time"
+    },
+    {
+      "name": "security.rsa.private-key",
+      "type": "java.security.interfaces.RSAPrivateKey",
+      "description": "The private key to use for sign JWT"
+    },
+    {
+      "name": "security.rsa.public-key",
+      "type": "java.security.interfaces.RSAPublicKey",
+      "description": "The public key to validate JWT"
+    },
+    {
+      "name": "spring.jackson.mapper.[ACCEPT_CASE_INSENSITIVE_ENUMS]",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

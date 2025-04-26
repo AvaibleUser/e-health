@@ -1,0 +1,63 @@
+server:
+  port: 8001
+  error:
+    include-message: always
+    include-binding-errors: always
+
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    root: warn
+    org:
+      springframework:
+        web: debug
+        data:
+          rest: debug
+
+spring:
+  application:
+    name: GateKeeper
+
+  datasource:
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    url: jdbc:postgresql://${DB_HOST}/${DB_DATABASE}
+
+  jackson:
+    time-zone: UTC
+    mapper:
+      "[ACCEPT_CASE_INSENSITIVE_ENUMS]": true
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+    open-in-view: false
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_ADDRESS}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+security:
+  rsa:
+    private-key: classpath:certs/private-key.pem
+    public-key: classpath:certs/public-key.pem
+
+  token:
+    expiration-time: 24
+    time-unit: HOURS
