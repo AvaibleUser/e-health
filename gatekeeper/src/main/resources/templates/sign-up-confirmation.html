@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Código de Confirmación</title>
+    <style>
+      * {
+        color: #cdd6f4;
+      }
+      body {
+        background-color: #1e1e2e;
+        font-family: "Arial", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background-color: #313244;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 500px;
+        max-width: 500px;
+        min-width: 500px;
+      }
+      h1,
+      h2 {
+        margin-bottom: 10px;
+      }
+      h1 {
+        color: #94e2d5;
+      }
+      .code-container {
+        margin: 10px 20px;
+        display: flex;
+        font-size: 0;
+      }
+      .code {
+        background-color: #181825;
+        padding: 10px 20px;
+        margin: 10px 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .important {
+        color: #94e2d5;
+        font-size: 24px;
+        font-weight: bolder;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Código de Confirmación</h1>
+      <h2>
+        <span class="important" th:text="${user.username}">Lorem</span>, para
+        finalizar el registro de tu cuenta, introduce el siguiente código:
+      </h2>
+      <br />
+      <div class="code-container">
+        <span th:each="c : ${code}" class="important code" th:text="${c}">0</span>
+      </div>
+      <br />
+    </div>
+  </body>
+</html>

@@ -22,7 +22,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Entity(name = "user")
-@Table(name = "user", schema = "user_control")
+@Table(name = "user", schema = "auth")
 @Data
 @Builder(toBuilder = true)
 @EqualsAndHashCode(of = "id")
@@ -46,9 +46,6 @@ public class UserEntity {
     @NonNull
     @Column(nullable = false)
     private String password;
-
-    @Column
-    private String profilePicture;
 
     @Column
     private boolean isDeleted;

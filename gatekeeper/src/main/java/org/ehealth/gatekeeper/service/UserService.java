@@ -1,0 +1,47 @@
+package org.ehealth.gatekeeper.service;
+
+import java.util.Optional;
+
+import org.ehealth.gatekeeper.domain.dto.AddUserDto;
+import org.ehealth.gatekeeper.domain.dto.UserDto;
+import org.ehealth.gatekeeper.domain.entity.UserEntity;
+import org.ehealth.gatekeeper.domain.exception.RequestConflictException;
+import org.ehealth.gatekeeper.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UserService implements IUserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+
+    @Override
+    public Optional<UserDto> findUserByEmail(String email) {
+        return userRepository.findByEmail(email, UserDto.class);
+    }
+
+    @Override
+    @Transactional
+    public void registerUser(AddUserDto user, boolean dryRun) {
+        if (userRepository.existsByEmail(user.email())) {
+            throw new RequestConflictException("El email que se intenta registrar ya esta en uso");
+        }
+        if (dryRun) {
+            return;
+        }
+        String encryptedPassword = encoder.encode(user.password());
+
+        UserEntity newUser = UserEntity.builder()
+                .username(user.username())
+                .email(user.email())
+                .password(encryptedPassword)
+                .build();
+
+        userRepository.save(newUser);
+    }
+}
