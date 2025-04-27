@@ -7,8 +7,14 @@ services:
       context: ./frontdoor
       dockerfile: ../Dockerfile
 
+    env_file:
+      - ./frontdoor/.env
+
     ports:
-      - 8080:8080
+      - 8000:8000
+
+    volumes:
+      - frontdoor-volume:/app/e-health.jar
 
   gatekeeper:
     container_name: e-health-gatekeeper
@@ -16,5 +22,43 @@ services:
       context: ./gatekeeper
       dockerfile: ../Dockerfile
 
+    env_file:
+      - ./gatekeeper/.env
     ports:
-      - 8081:8081
+      - 8001:8001
+
+    volumes:
+      - gatekeeper-volume:/app/e-health.jar
+
+    depends_on:
+      authdb:
+        condition: service_healthy
+
+  authdb:
+    container_name: e-health-auth-db
+    image: postgres:17.1-alpine
+    ports:
+      - 5432:5432
+    
+    volumes:
+      - ./authdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 2
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth
+
+volumes:
+  frontdoor-volume:
+    name: ./frontdoor/build/libs/frontdoor-0.0.1-SNAPSHOT.jar
+    external: true
+
+  gatekeeper-volume:
+    name: ./gatekeeper/build/libs/gatekeeper-0.0.1-SNAPSHOT.jar
+    external: true

@@ -1,8 +1,8 @@
 project='frontdoor'
 
 execute_run() {
-  printf "Ejecutando gradle bootRun en ${project}"
-  (env $(cat "${project}/.env" | xargs) ./gradlew clean ":${project}:bootRun --debug")
+  printf "Ejecutando gradle bootRun en ${project}\n"
+  (env $(cat "${project}/.env" | xargs) ./gradlew clean ":${project}:bootRun")
 }
 
 execute_error() {
