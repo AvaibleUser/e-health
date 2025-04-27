@@ -4,9 +4,6 @@ server:
     include-message: always
     include-binding-errors: always
 
-  servlet:
-    context-path: /api
-
 logging:
   level:
     root: warn

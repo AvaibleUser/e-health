@@ -19,7 +19,6 @@ import org.ehealth.gatekeeper.service.util.ITemplateService;
 import org.ehealth.gatekeeper.service.util.ITokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,10 +80,5 @@ public class AuthController {
 
         return userService.findUserByEmail(user.email())
                 .map(tokenService::generateToken);
-    }
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello World";
     }
 }

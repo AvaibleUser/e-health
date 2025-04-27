@@ -8,6 +8,10 @@
     {
       "name": "spring.jackson.mapper.[ACCEPT_CASE_INSENSITIVE_ENUMS]",
       "type": "java.lang.Boolean"
+    },
+    {
+      "name": "route.services.auth.url",
+      "type": "java.lang.String"
     }
   ]
 }

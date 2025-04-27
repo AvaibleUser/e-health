@@ -14,7 +14,7 @@ services:
       - 8000:8000
 
     volumes:
-      - frontdoor-volume:/app/e-health.jar
+      - ./frontdoor/build/libs/frontdoor-0.0.1-SNAPSHOT.jar:/app/e-health.jar
 
   gatekeeper:
     container_name: e-health-gatekeeper
@@ -28,7 +28,7 @@ services:
       - 8001:8001
 
     volumes:
-      - gatekeeper-volume:/app/e-health.jar
+      - ./gatekeeper/build/libs/gatekeeper-0.0.1-SNAPSHOT.jar:/app/e-health.jar
 
     depends_on:
       authdb:
@@ -53,12 +53,3 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=auth
-
-volumes:
-  frontdoor-volume:
-    name: ./frontdoor/build/libs/frontdoor-0.0.1-SNAPSHOT.jar
-    external: true
-
-  gatekeeper-volume:
-    name: ./gatekeeper/build/libs/gatekeeper-0.0.1-SNAPSHOT.jar
-    external: true
