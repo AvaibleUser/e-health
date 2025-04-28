@@ -28,7 +28,8 @@ public class JwtService implements ITokenService {
                 .issuedAt(now)
                 .expiresAt(now.plus(tokenProperty.expirationTime(), tokenProperty.timeUnit()))
                 .subject(String.valueOf(user.id()))
-                .claim("auths", List.of())
+                .claim("auths", List.of("ROLE_".concat(user.roleName())))
+                .claim("cui", user.employeeCui())
                 .build();
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

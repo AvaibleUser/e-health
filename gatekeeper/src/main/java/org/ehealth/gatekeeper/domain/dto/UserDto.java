@@ -7,9 +7,10 @@ import lombok.Builder;
 @Builder(toBuilder = true)
 public record UserDto(
         Long id,
-        String username,
         String email,
         boolean isDeleted,
+        String roleName,
+        Long employeeCui,
         Instant createdAt,
         Instant updatedAt) {
 }
