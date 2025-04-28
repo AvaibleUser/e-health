@@ -35,12 +35,12 @@ public class AuthManager implements AuthenticationManager {
             throw new FailedAuthenticateException("La cuenta aun no se ha confirmado");
         }
 
-        // UserEntity user = userRepository.findByEmail(email, UserEntity.class)
-        userRepository.findByEmail(email, UserEntity.class)
+        UserEntity user = userRepository.findByEmail(email, UserEntity.class)
                 .filter(dbUser -> encoder.matches(password, dbUser.getPassword()))
                 .orElseThrow(() -> new BadRequestException("El email o la contraseña es incorrecta"));
 
-        // TODO: get authorities
-        return authenticated(email, password, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        String role = "ROLE_".concat(user.getRole().getName());
+
+        return authenticated(email, password, List.of(new SimpleGrantedAuthority(role)));
     }
 }

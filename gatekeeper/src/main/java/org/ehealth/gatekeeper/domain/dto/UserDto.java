@@ -10,7 +10,7 @@ public record UserDto(
         String email,
         boolean isDeleted,
         String roleName,
-        Long employeeCui,
+        Long cui,
         Instant createdAt,
         Instant updatedAt) {
 }

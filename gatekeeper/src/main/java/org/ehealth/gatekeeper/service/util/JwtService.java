@@ -24,12 +24,12 @@ public class JwtService implements ITokenService {
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
+                .issuer("gatekeeper")
                 .issuedAt(now)
                 .expiresAt(now.plus(tokenProperty.expirationTime(), tokenProperty.timeUnit()))
                 .subject(String.valueOf(user.id()))
                 .claim("auths", List.of("ROLE_".concat(user.roleName())))
-                .claim("cui", user.employeeCui())
+                .claim("cui", user.cui())
                 .build();
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

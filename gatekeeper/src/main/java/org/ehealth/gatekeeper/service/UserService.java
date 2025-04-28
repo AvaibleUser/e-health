@@ -4,11 +4,9 @@ import java.util.Optional;
 
 import org.ehealth.gatekeeper.domain.dto.AddUserDto;
 import org.ehealth.gatekeeper.domain.dto.UserDto;
-import org.ehealth.gatekeeper.domain.entity.EmployeeEntity;
 import org.ehealth.gatekeeper.domain.entity.RoleEntity;
 import org.ehealth.gatekeeper.domain.entity.UserEntity;
 import org.ehealth.gatekeeper.domain.exception.RequestConflictException;
-import org.ehealth.gatekeeper.repository.EmployeeRepository;
 import org.ehealth.gatekeeper.repository.RoleRepository;
 import org.ehealth.gatekeeper.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +21,6 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final EmployeeRepository employeeRepository;
     private final PasswordEncoder encoder;
 
     @Override
@@ -37,7 +34,7 @@ public class UserService implements IUserService {
         if (userRepository.existsByEmail(user.email())) {
             throw new RequestConflictException("El email que se intenta registrar ya esta en uso");
         }
-        if (employeeRepository.existsByCui(user.cui())) {
+        if (userRepository.existsByCui(user.cui())) {
             throw new RequestConflictException("El CUI que se intenta registrar ya esta en uso");
         }
         RoleEntity role = roleRepository.findByName(user.role(), RoleEntity.class)
@@ -48,17 +45,11 @@ public class UserService implements IUserService {
         }
         String encryptedPassword = encoder.encode(user.password());
 
-        EmployeeEntity employee = EmployeeEntity.builder()
-                .fullName(user.fullName())
-                .cui(user.cui())
-                .phone(user.phone())
-                .build();
-
         UserEntity newUser = UserEntity.builder()
                 .email(user.email())
                 .password(encryptedPassword)
+                .cui(user.cui())
                 .role(role)
-                .employee(employee)
                 .build();
 
         userRepository.save(newUser);

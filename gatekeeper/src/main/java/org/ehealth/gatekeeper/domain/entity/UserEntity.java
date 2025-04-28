@@ -1,6 +1,5 @@
 package org.ehealth.gatekeeper.domain.entity;
 
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -15,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,7 +45,10 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column
+    @NonNull
+    @Column(nullable = false, unique = true)
+    private String cui;
+
     @Builder.Default
     private boolean active = true;
 
@@ -55,11 +56,6 @@ public class UserEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id")
     private RoleEntity role;
-
-    @NonNull
-    @OneToOne(cascade = ALL, optional = false)
-    @JoinColumn(name = "employee_id")
-    private EmployeeEntity employee;
 
     @CreationTimestamp
     private Instant createdAt;
