@@ -12,6 +12,10 @@
     {
       "name": "route.services.auth.url",
       "type": "java.lang.String"
+    },
+    {
+      "name": "route.services.employee.url",
+      "type": "java.lang.String"
     }
   ]
 }

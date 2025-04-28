@@ -33,3 +33,6 @@ route:
   services:
     auth:
       url: ${GATEKEEPER_URL:http://gatekeeper:8001/}
+
+    employee:
+      url: ${HR_URL:http://hr:8002/}

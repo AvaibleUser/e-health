@@ -34,6 +34,26 @@ services:
       authdb:
         condition: service_healthy
 
+  hr:
+    container_name: e-health-hr
+    build:
+      context: ./hr
+      dockerfile: ../Dockerfile
+
+    env_file:
+      - ./hr/.env
+
+    ports:
+      - 8002:8002
+
+    volumes:
+      - ./hr/build/libs/hr-0.0.1-SNAPSHOT.jar:/app/e-health.jar
+
+    depends_on:
+      hrdb:
+        condition: service_healthy
+
+  # Microservice Databases
   authdb:
     container_name: e-health-auth-db
     image: postgres:17.1-alpine
@@ -47,9 +67,29 @@ services:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 1s
       timeout: 5s
-      retries: 2
+      retries: 10
 
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=auth
+
+  hrdb:
+    container_name: e-health-hr-db
+    image: postgres:17.1-alpine
+    ports:
+      - 5433:5432
+
+    volumes:
+      - ./hrdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=hr
