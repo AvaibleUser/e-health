@@ -64,7 +64,7 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private Set<VacationEntity> vacations;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "specialistDoctor")
     private Set<SpecialistPaymentEntity> payments;
 
     @CreationTimestamp

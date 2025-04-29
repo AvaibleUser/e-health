@@ -4,6 +4,9 @@ server:
     include-message: always
     include-binding-errors: always
 
+  servlet:
+    context-path: /gatekeeper
+
 logging:
   level:
     root: warn

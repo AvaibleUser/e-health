@@ -36,3 +36,9 @@ route:
 
     employee:
       url: ${HR_URL:http://hr:8002/}
+
+    patient:
+      url: ${WARD_URL:http://ward:8003/}
+
+    pharmacy:
+      url: ${RX_URL:http://rx:8004/}

@@ -18,7 +18,7 @@ public class AuthenticationRoutes {
     RouterFunction<ServerResponse> routeAuthenticationService(AuthServiceProperty servicesProperty) {
         return route()
                 .before(stripPrefix(1))
-                .route(path("/v1/auth/**"), http(servicesProperty.url()))
+                .route(path("/gatekeeper/v1/**"), http(servicesProperty.url()))
                 .build();
     }
 }

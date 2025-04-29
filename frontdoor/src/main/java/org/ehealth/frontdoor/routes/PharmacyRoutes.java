@@ -5,20 +5,20 @@ import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouter
 import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
 import static org.springframework.cloud.gateway.server.mvc.predicate.GatewayRequestPredicates.path;
 
-import org.ehealth.frontdoor.config.property.EmployeeServiceProperty;
+import org.ehealth.frontdoor.config.property.PharmacyServiceProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
 @Configuration
-public class EmployeeRoutes {
+public class PharmacyRoutes {
 
     @Bean
-    RouterFunction<ServerResponse> routeEmployeeService(EmployeeServiceProperty servicesProperty) {
+    RouterFunction<ServerResponse> routePharmacyService(PharmacyServiceProperty servicesProperty) {
         return route()
                 .before(stripPrefix(1))
-                .route(path("/hr/v1/**"), http(servicesProperty.url()))
+                .route(path("/rx/v1/**"), http(servicesProperty.url()))
                 .build();
     }
 }

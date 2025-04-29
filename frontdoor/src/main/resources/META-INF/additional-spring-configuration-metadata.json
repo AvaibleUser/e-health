@@ -16,6 +16,14 @@
     {
       "name": "route.services.employee.url",
       "type": "java.lang.String"
+    },
+    {
+      "name": "route.services.patient.url",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "route.services.pharmacy.url",
+      "type": "java.lang.String"
     }
   ]
 }

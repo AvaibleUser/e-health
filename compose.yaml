@@ -34,10 +34,6 @@ services:
     volumes:
       - ./gatekeeper/build/libs/gatekeeper-0.0.1-SNAPSHOT.jar:/app/e-health.jar
 
-    depends_on:
-      authdb:
-        condition: service_healthy
-
   # Employee
   hr:
     container_name: e-health-hr
@@ -53,10 +49,6 @@ services:
 
     volumes:
       - ./hr/build/libs/hr-0.0.1-SNAPSHOT.jar:/app/e-health.jar
-
-    depends_on:
-      hrdb:
-        condition: service_healthy
 
   # Patient
   ward:
@@ -74,10 +66,6 @@ services:
     volumes:
       - ./ward/build/libs/ward-0.0.1-SNAPSHOT.jar:/app/e-health.jar
 
-    depends_on:
-      warddb:
-        condition: service_healthy
-
   # Pharmacy
   rx:
     container_name: e-health-rx
@@ -93,89 +81,3 @@ services:
 
     volumes:
       - ./rx/build/libs/rx-0.0.1-SNAPSHOT.jar:/app/e-health.jar
-
-    depends_on:
-      rxdb:
-        condition: service_healthy
-
-  # BEGIN: Microservice Databases
-
-  authdb:
-    container_name: e-health-auth-db
-    image: postgres:17.1-alpine
-    ports:
-      - 5431:5432
-    
-    volumes:
-      - ./ddls/authdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=auth
-
-  hrdb:
-    container_name: e-health-hr-db
-    image: postgres:17.1-alpine
-    ports:
-      - 5432:5432
-
-    volumes:
-      - ./ddls/hrdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=hr
-
-  warddb:
-    container_name: e-health-ward-db
-    image: postgres:17.1-alpine
-    ports:
-      - 5433:5432
-
-    volumes:
-      - ./ddls/warddb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=ward
-
-  rxdb:
-    container_name: e-health-rx-db
-    image: postgres:17.1-alpine
-    ports:
-      - 5434:5432
-
-    volumes:
-      - ./ddls/rxdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=rx
