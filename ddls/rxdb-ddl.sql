@@ -1,0 +1,31 @@
+CREATE SCHEMA rx;
+
+CREATE TABLE rx.medicine (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  unit_price NUMERIC(10, 2) NOT NULL,
+  stock INTEGER DEFAULT 0,
+  min_stock INTEGER DEFAULT 10,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP
+);
+
+CREATE TABLE rx.purchase (
+  id BIGSERIAL PRIMARY KEY,
+  quantity INTEGER NOT NULL,
+  price NUMERIC(10, 2) NOT NULL,
+  medicine_id BIGINT NOT NULL REFERENCES rx.medicine (id),
+  purchased_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP
+);
+
+CREATE TABLE rx.sale (
+  id BIGSERIAL PRIMARY KEY,
+  quantity INTEGER NOT NULL,
+  unit_price NUMERIC(10, 2) NOT NULL,
+  patient_id BIGINT NOT NULL,
+  employee_id BIGINT NOT NULL,
+  medicine_id BIGINT NOT NULL REFERENCES rx.medicine (id),
+  sold_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP
+);

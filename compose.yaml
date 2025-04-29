@@ -1,6 +1,7 @@
 name: e-health
 
 services:
+  # Gateway
   frontdoor:
     container_name: e-health-frontdoor
     build:
@@ -16,6 +17,7 @@ services:
     volumes:
       - ./frontdoor/build/libs/frontdoor-0.0.1-SNAPSHOT.jar:/app/e-health.jar
 
+  # Auth
   gatekeeper:
     container_name: e-health-gatekeeper
     build:
@@ -34,6 +36,7 @@ services:
       authdb:
         condition: service_healthy
 
+  # Employee
   hr:
     container_name: e-health-hr
     build:
@@ -53,15 +56,36 @@ services:
       hrdb:
         condition: service_healthy
 
-  # Microservice Databases
+  # Pharmacy
+  rx:
+    container_name: e-health-rx
+    build:
+      context: ./rx
+      dockerfile: ../Dockerfile
+
+    env_file:
+      - ./rx/.env
+
+    ports:
+      - 8004:8004
+
+    volumes:
+      - ./rx/build/libs/rx-0.0.1-SNAPSHOT.jar:/app/e-health.jar
+
+    depends_on:
+      rxdb:
+        condition: service_healthy
+
+  # BEGIN: Microservice Databases
+
   authdb:
     container_name: e-health-auth-db
     image: postgres:17.1-alpine
     ports:
-      - 5432:5432
+      - 5431:5432
     
     volumes:
-      - ./authdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - ./ddls/authdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
@@ -78,10 +102,10 @@ services:
     container_name: e-health-hr-db
     image: postgres:17.1-alpine
     ports:
-      - 5433:5432
+      - 5432:5432
 
     volumes:
-      - ./hrdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - ./ddls/hrdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
@@ -93,3 +117,23 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=hr
+
+  rxdb:
+    container_name: e-health-rx-db
+    image: postgres:17.1-alpine
+    ports:
+      - 5434:5432
+
+    volumes:
+      - ./ddls/rxdb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=rx
