@@ -1,9 +1,9 @@
 package org.ehealth.rx;
 
+import org.ehealth.rx.util.ApiTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApiTest
 class RxApplicationTests {
 
 	@Test

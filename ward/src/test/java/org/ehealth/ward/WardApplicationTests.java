@@ -1,9 +1,9 @@
 package org.ehealth.ward;
 
+import org.ehealth.ward.util.ApiTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApiTest
 class WardApplicationTests {
 
 	@Test
