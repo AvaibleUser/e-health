@@ -1,6 +1,8 @@
 name: e-health
 
 services:
+  # BEGIN: Microservices
+
   # Gateway
   frontdoor:
     container_name: e-health-frontdoor
@@ -54,6 +56,26 @@ services:
 
     depends_on:
       hrdb:
+        condition: service_healthy
+
+  # Patient
+  ward:
+    container_name: e-health-ward
+    build:
+      context: ./ward
+      dockerfile: ../Dockerfile
+
+    env_file:
+      - ./ward/.env
+
+    ports:
+      - 8003:8003
+
+    volumes:
+      - ./ward/build/libs/ward-0.0.1-SNAPSHOT.jar:/app/e-health.jar
+
+    depends_on:
+      warddb:
         condition: service_healthy
 
   # Pharmacy
@@ -117,6 +139,26 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=hr
+
+  warddb:
+    container_name: e-health-ward-db
+    image: postgres:17.1-alpine
+    ports:
+      - 5433:5432
+
+    volumes:
+      - ./ddls/warddb-ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ward
 
   rxdb:
     container_name: e-health-rx-db
