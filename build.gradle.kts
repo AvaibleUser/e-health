@@ -75,3 +75,7 @@ subprojects {
 		}
 	}
 }
+
+tasks.register("bootJarAll") {
+	dependsOn(subprojects.map { it.tasks.getByName("bootJar") })
+}

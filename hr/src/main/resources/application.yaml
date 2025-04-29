@@ -5,7 +5,7 @@ server:
     include-binding-errors: always
 
   servlet:
-    context-path: /hr
+    context-path: /api/hr
 
 logging:
   level:

@@ -5,7 +5,7 @@ server:
     include-binding-errors: always
 
   servlet:
-    context-path: /rx
+    context-path: /api/rx
 
 logging:
   level:

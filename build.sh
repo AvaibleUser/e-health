@@ -19,7 +19,7 @@ execute_build() {
       docker image rm -f $(docker image ls | grep -E 'e-health|none' | awk '{print $3}')
     fi
   fi
-  command+=('bootJar')
+  command+=('bootJarAll')
   if [ "${verbose}" == 'true' ]; then
     command+=('--info')
   fi

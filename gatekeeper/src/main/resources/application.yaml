@@ -5,7 +5,7 @@ server:
     include-binding-errors: always
 
   servlet:
-    context-path: /gatekeeper
+    context-path: /api/gatekeeper
 
 logging:
   level:

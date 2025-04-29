@@ -5,7 +5,7 @@ server:
     include-binding-errors: always
 
   servlet:
-    context-path: /ward
+    context-path: /api/ward
 
 logging:
   level:
