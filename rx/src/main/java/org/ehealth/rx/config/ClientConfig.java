@@ -7,27 +7,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import feign.RequestInterceptor;
-import feign.RequestTemplate;
 
 @Configuration
 public class ClientConfig {
 
     @Bean
     RequestInterceptor authorizationRequestInterceptor() {
-        return new AuthorizationRequestInterceptor();
-    }
-
-    public static class AuthorizationRequestInterceptor implements RequestInterceptor {
-
-        @Override
-        public void apply(RequestTemplate template) {
+        return (template) -> {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null) {
-                return;
+            if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+                String token = jwt.getTokenValue();
+                template.header("Authorization", "Bearer " + token);
             }
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-            String token = jwt.getTokenValue();
-            template.header("Authorization", "Bearer " + token);
-        }
+        };
     }
 }
