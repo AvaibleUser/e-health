@@ -8,6 +8,22 @@
     {
       "name": "spring.jackson.mapper.[ACCEPT_CASE_INSENSITIVE_ENUMS]",
       "type": "java.lang.Boolean"
+    },
+    {
+      "name": "client.services.auth",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "client.services.employee",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "client.services.patient",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "client.services.pharmacy",
+      "type": "java.lang.String"
     }
   ]
 }

@@ -1,4 +1,4 @@
-package org.ehealth.gatekeeper.domain.dto;
+package org.ehealth.ward.domain.dto.auth;
 
 import java.time.Instant;
 
@@ -8,9 +8,9 @@ import lombok.Builder;
 public record UserDto(
         Long id,
         String email,
-        String cui,
-        boolean active,
+        boolean isDeleted,
         String roleName,
+        Long cui,
         Instant createdAt,
         Instant updatedAt) {
 }

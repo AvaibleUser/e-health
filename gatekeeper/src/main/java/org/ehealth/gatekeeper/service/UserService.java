@@ -7,6 +7,7 @@ import org.ehealth.gatekeeper.domain.dto.UserDto;
 import org.ehealth.gatekeeper.domain.entity.RoleEntity;
 import org.ehealth.gatekeeper.domain.entity.UserEntity;
 import org.ehealth.gatekeeper.domain.exception.RequestConflictException;
+import org.ehealth.gatekeeper.domain.exception.ValueNotFoundException;
 import org.ehealth.gatekeeper.repository.RoleRepository;
 import org.ehealth.gatekeeper.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,7 +39,7 @@ public class UserService implements IUserService {
             throw new RequestConflictException("El CUI que se intenta registrar ya esta en uso");
         }
         RoleEntity role = roleRepository.findByName(user.role(), RoleEntity.class)
-                .orElseThrow(() -> new RequestConflictException("El rol que se intenta asignar no existe"));
+                .orElseThrow(() -> new ValueNotFoundException("El rol que se intenta asignar no existe"));
 
         if (dryRun) {
             return;

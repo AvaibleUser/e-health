@@ -44,3 +44,7 @@ spring:
 security:
   rsa:
     public-key: classpath:certs/public-key.pem
+
+client:
+  services:
+    auth: ${GATEKEEPER_URL:http://gatekeeper:8001}
