@@ -1,9 +1,9 @@
 package org.ehealth.gatekeeper;
 
+import org.ehealth.gatekeeper.util.ApiTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApiTest
 class GateKeeperApplicationTests {
 
     @Test

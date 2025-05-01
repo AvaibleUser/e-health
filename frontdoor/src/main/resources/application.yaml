@@ -42,3 +42,21 @@ route:
 
     pharmacy:
       url: ${RX_URL:http://rx:8004/}
+
+springdoc:
+  swagger-ui:
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+
+      - url: /gatekeeper/v3/api-docs
+        name: Auth Service
+
+      - url: /hr/v3/api-docs
+        name: Employee Service
+
+      - url: /ward/v3/api-docs
+        name: Patient Service
+
+      - url: /rx/v3/api-docs
+        name: Pharmacy Service

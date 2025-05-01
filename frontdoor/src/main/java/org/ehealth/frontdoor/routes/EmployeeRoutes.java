@@ -1,6 +1,5 @@
 package org.ehealth.frontdoor.routes;
 
-import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.stripPrefix;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
 import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
 import static org.springframework.cloud.gateway.server.mvc.predicate.GatewayRequestPredicates.path;
@@ -17,8 +16,7 @@ public class EmployeeRoutes {
     @Bean
     RouterFunction<ServerResponse> routeEmployeeService(EmployeeServiceProperty servicesProperty) {
         return route()
-                .before(stripPrefix(1))
-                .route(path("/hr/v1/**"), http(servicesProperty.url()))
+                .route(path("/hr/**"), http(servicesProperty.url()))
                 .build();
     }
 }

@@ -37,7 +37,9 @@ public class AuthConfig {
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
-                .authorizeHttpRequests(a -> a.anyRequest().permitAll())
+                .authorizeHttpRequests(a -> a
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/error").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtCustomizer -> jwtCustomizer
                                 .decoder(jwtDecoder)

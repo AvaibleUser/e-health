@@ -13,5 +13,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     boolean existsByCui(String cui);
 
+    Optional<?> findUnknownById(long id, Class<?> type);
+
     <U> Optional<U> findByEmail(String email, Class<U> type);
 }

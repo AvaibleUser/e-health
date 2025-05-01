@@ -2,23 +2,24 @@ package org.ehealth.hr.service;
 
 import lombok.RequiredArgsConstructor;
 import org.ehealth.hr.domain.dto.CreateEmployeeDto;
+import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
 import org.ehealth.hr.domain.entity.AreaEntity;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
+import org.ehealth.hr.domain.exception.ValueNotFoundException;
 import org.ehealth.hr.repository.AreaRepository;
 import org.ehealth.hr.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
+
     private final EmployeeRepository employeeRepository;
     private final AreaRepository areaRepository;
     private final IContractService contractService;
     private final IVacationService vacationService;
 
-    @Transactional
     @Override
     public EmployeeResponseDto createEmployee(CreateEmployeeDto dto) {
         // Validar que no exista otro con mismo CUI o email
@@ -55,4 +56,8 @@ public class EmployeeService implements IEmployeeService {
         return EmployeeResponseDto.fromEntity(employee);
     }
 
+    public EmployeeDto findEmployeeByCui(String cui) {
+        return employeeRepository.findByCui(cui, EmployeeDto.class)
+                .orElseThrow(() -> new ValueNotFoundException("El empleado que se intenta buscar no existe"));
+    }
 }

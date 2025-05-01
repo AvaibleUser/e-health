@@ -8,9 +8,9 @@ import lombok.Builder;
 public record UserDto(
         Long id,
         String email,
-        boolean isDeleted,
+        String cui,
+        boolean active,
         String roleName,
-        Long cui,
         Instant createdAt,
         Instant updatedAt) {
 }

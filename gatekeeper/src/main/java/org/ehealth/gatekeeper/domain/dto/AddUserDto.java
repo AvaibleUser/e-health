@@ -5,10 +5,8 @@ import lombok.Builder;
 
 @Builder(toBuilder = true)
 public record AddUserDto(
-        @NotBlank String role,
         @NotBlank String email,
         @NotBlank String password,
         @NotBlank String fullName,
-        @NotBlank String cui,
-        String phone) {
+        @NotBlank String cui) {
 }

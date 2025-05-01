@@ -4,7 +4,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.unauthenticated;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.ehealth.gatekeeper.domain.dto.AddUserDto;
 import org.ehealth.gatekeeper.domain.dto.AuthUserDto;
@@ -17,6 +16,7 @@ import org.ehealth.gatekeeper.service.IUserService;
 import org.ehealth.gatekeeper.service.util.IEmailService;
 import org.ehealth.gatekeeper.service.util.ITemplateService;
 import org.ehealth.gatekeeper.service.util.ITokenService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,11 +74,11 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
-    public Optional<TokenDto> signIn(@RequestBody @Valid AuthUserDto user) {
+    public ResponseEntity<TokenDto> signIn(@RequestBody @Valid AuthUserDto user) {
         var authenticableUser = unauthenticated(user.email(), user.password());
         authManager.authenticate(authenticableUser);
 
-        return userService.findUserByEmail(user.email())
-                .map(tokenService::generateToken);
+        return ResponseEntity.of(userService.findUserByEmail(user.email())
+                .map(tokenService::generateToken));
     }
 }

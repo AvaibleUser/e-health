@@ -49,8 +49,7 @@ public class UserEntity {
     @Column(nullable = false, unique = true)
     private String cui;
 
-    @Builder.Default
-    private boolean active = true;
+    private boolean active;
 
     @NonNull
     @ManyToOne(optional = false)
