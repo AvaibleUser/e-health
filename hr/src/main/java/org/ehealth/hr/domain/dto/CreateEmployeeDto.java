@@ -18,13 +18,12 @@ public record CreateEmployeeDto(
         @NotBlank String phone,
         @NotBlank @Email String email,
         @Positive Long area,
+        @NotNull boolean isSpecialist,
         // contract
-        @NotNull @JsonFormat(pattern = "yyyy-MM-dd")
-        LocalDate startDate,
         @JsonFormat(pattern = "yyyy-MM-dd")
-        LocalDate endDate,
+        LocalDate startDate,
         @Positive BigDecimal salary,
-        @Positive  BigDecimal igssDiscount,
-        @Positive  BigDecimal irtraDiscount
+        @Positive BigDecimal igssDiscount,
+        @Positive BigDecimal irtraDiscount
 ) {
 }
