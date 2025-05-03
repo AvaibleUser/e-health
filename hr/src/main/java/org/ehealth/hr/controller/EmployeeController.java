@@ -18,7 +18,7 @@ public class EmployeeController {
     private final IEmployeeService employeeService;
 
     @PermitAll
-    @GetMapping(value = "/{cui}", params = "by=cui")
+    @GetMapping(value = "/cui/{cui}")
     public EmployeeDto findEmployeeByCui(@PathVariable String cui) {
         return employeeService.findEmployeeByCui(cui);
     }
