@@ -18,12 +18,12 @@ import java.util.List;
 public class AreaController {
     private final IAreaService areaService;
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<AreaResponseDto> create(@Valid @RequestBody CreateAreaDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(areaService.create(dto));
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<AreaResponseDto>> findAll() {
         return ResponseEntity.ok(areaService.findAll());
     }
