@@ -61,16 +61,22 @@ public class AuthController {
     }
 
     @PutMapping("/sign-up")
-    public TokenDto confirmSignUp(@RequestBody @Valid ConfirmUserDto user) {
+    public ResponseEntity<TokenDto> confirmSignUp(@RequestBody @Valid ConfirmUserDto user) {
         boolean confirmed = codesService.confirmCode(user.email(),
                 user.code());
         if (!confirmed) {
             throw new FailedAuthenticateException("No se pudo confirmar la cuenta");
         }
 
-        return userService.findUserByEmail(user.email())
-                .map(tokenService::generateToken)
-                .orElseThrow(() -> new InsufficientAuthenticationException("No se encontro el registro del usuario"));
+        try {
+            return userService.findUserByEmail(user.email())
+                    .map(tokenService::generateToken)
+                    .map(ResponseEntity::ok)
+                    .orElseThrow(
+                            () -> new InsufficientAuthenticationException("No se encontro el registro del usuario"));
+        } catch (RequestConflictException e) {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @PostMapping("/sign-in")

@@ -7,6 +7,5 @@ import lombok.Builder;
 public record AddUserDto(
         @NotBlank String email,
         @NotBlank String password,
-        @NotBlank String fullName,
         @NotBlank String cui) {
 }
