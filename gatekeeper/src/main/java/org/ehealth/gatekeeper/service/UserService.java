@@ -30,7 +30,7 @@ public class UserService implements IUserService {
     @Override
     public Optional<UserDto> findUserByEmail(String email) {
         Optional<UserDto> user = userRepository.findByEmail(email, UserDto.class);
-        if (user.isPresent() && user.map(UserDto::active).map(Boolean.TRUE::equals).get()) {
+        if (user.isPresent() && user.map(UserDto::active).map(Boolean.FALSE::equals).get()) {
             throw new RequestConflictException("El usuario aun no ha sido activado por el administrador");
         }
         return user;
@@ -50,7 +50,7 @@ public class UserService implements IUserService {
         try {
             employeeClient.findEmployeeByCui(user.cui());
         } catch (FeignException e) {
-            throw new RequestConflictException("El CUI que se intenta registrar no existe");
+            throw new RequestConflictException("El CUI que se intenta registrar no existe en pantilla de empelados");
         }
 
         if (dryRun) {
