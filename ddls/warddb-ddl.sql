@@ -101,6 +101,8 @@ CREATE TABLE finance.bill
     id BIGSERIAL PRIMARY KEY,
     patient_id BIGINT NOT NULL REFERENCES ward.patient (id),
     total NUMERIC(10, 2),
+    is_closed BOOLEAN NOT NULL DEFAULT FALSE,
+    is_paid BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -117,8 +119,9 @@ CREATE TABLE finance.bill_item
     concept VARCHAR(255) NOT NULL,
     amount NUMERIC(10, 2),
     type finance.bill_item_type_enum NOT NULL DEFAULT 'CONSULTATION',
-    admission_id BIGINT NOT NULL REFERENCES ward.admission (id),
-    surgery_id BIGINT NOT NULL REFERENCES operating_room.surgery (id),
+    sale_id BIGINT,
+    admission_id BIGINT NULL REFERENCES ward.admission (id),
+    surgery_id BIGINT NULL REFERENCES operating_room.surgery (id),
     bill_id BIGINT NOT NULL REFERENCES finance.bill (id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
