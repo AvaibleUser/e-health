@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "hr", url = "${client.services.employee}/api/hr")
 public interface EmployeeClient {
 
-    @GetMapping(value = "/v1/employee/{cui}", params = "by=cui")
+    @GetMapping(value = "/v1/employee/cui/{cui}")
     EmployeeDto findEmployeeByCui(@PathVariable String cui);
 }
