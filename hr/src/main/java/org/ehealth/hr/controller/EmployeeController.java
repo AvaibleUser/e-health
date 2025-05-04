@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/v1/employee")
+@RequestMapping("/v1/employees")
 @RequiredArgsConstructor
 public class EmployeeController {
 
@@ -31,6 +33,18 @@ public class EmployeeController {
     public ResponseEntity<EmployeeResponseDto> createEmployee(@RequestBody CreateEmployeeDto dto) {
         EmployeeResponseDto response = employeeService.createEmployee(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EmployeeDto>> findAllEmployees() {
+        List<EmployeeDto> employees = employeeService.findAllEmployeesOrdered();
+        return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/area/{areaId}")
+    public ResponseEntity<List<EmployeeDto>> findEmployeesByArea(@PathVariable Long areaId) {
+        List<EmployeeDto> employees = employeeService.findEmployeesByArea(areaId);
+        return ResponseEntity.ok(employees);
     }
 
 }

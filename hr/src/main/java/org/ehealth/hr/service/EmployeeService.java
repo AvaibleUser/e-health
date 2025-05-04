@@ -6,10 +6,13 @@ import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
 import org.ehealth.hr.domain.entity.AreaEntity;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
+import org.ehealth.hr.domain.exception.RequestConflictException;
 import org.ehealth.hr.domain.exception.ValueNotFoundException;
 import org.ehealth.hr.repository.AreaRepository;
 import org.ehealth.hr.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +27,12 @@ public class EmployeeService implements IEmployeeService {
     public EmployeeResponseDto createEmployee(CreateEmployeeDto dto) {
         // Validar que no exista otro con mismo CUI o email
         if (employeeRepository.existsByEmail(dto.email()) || employeeRepository.existsByCui(dto.cui())) {
-            throw new IllegalArgumentException("Ya existe un empleado con el CUI o correo electrónico proporcionado.");
+            throw new RequestConflictException("Ya existe un empleado con el CUI o correo electrónico proporcionado.");
         }
 
         // Obtener el área asociada
         AreaEntity area = areaRepository.findById(dto.area())
-                .orElseThrow(() -> new IllegalArgumentException("Área no encontrada con ID: " + dto.area()));
+                .orElseThrow(() -> new RequestConflictException("Área no encontrada con ID: " + dto.area()));
 
         // Crear el empleado
         EmployeeEntity employee = employeeRepository.save(EmployeeEntity.builder()
@@ -56,8 +59,22 @@ public class EmployeeService implements IEmployeeService {
         return EmployeeResponseDto.fromEntity(employee);
     }
 
+    @Override
     public EmployeeDto findEmployeeByCui(String cui) {
         return employeeRepository.findByCui(cui, EmployeeDto.class)
                 .orElseThrow(() -> new ValueNotFoundException("El empleado que se intenta buscar no existe"));
     }
+
+    @Override
+    public List<EmployeeDto> findAllEmployeesOrdered() {
+        return employeeRepository.findAllByOrderByCreatedAtDesc(EmployeeDto.class);
+    }
+
+    @Override
+    public List<EmployeeDto> findEmployeesByArea(Long areaId) {
+        return employeeRepository.findAllByAreaIdOrderByCreatedAtDesc(areaId, EmployeeDto.class);
+    }
+
+
+
 }

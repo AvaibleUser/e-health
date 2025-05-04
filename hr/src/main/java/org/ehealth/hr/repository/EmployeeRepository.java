@@ -1,5 +1,6 @@
 package org.ehealth.hr.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.ehealth.hr.domain.entity.EmployeeEntity;
@@ -12,4 +13,9 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
     boolean existsByCui(String cui);
 
     <T> Optional<T> findByCui(String cui, Class<T> type);
+
+    <T> List<T> findAllByOrderByCreatedAtDesc(Class<T> type);
+
+    <T> List<T> findAllByAreaIdOrderByCreatedAtDesc(Long areaId, Class<T> type);
+
 }
