@@ -41,4 +41,10 @@ public class ContractController {
         contractService.updateSalary(contractId,updateSalaryDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PatchMapping("/dismissal-work/{contractId}")
+    public ResponseEntity<Void> dismissalWork(@PathVariable Long contractId, @RequestBody @Valid FinishContractDto finishContractDto) {
+        contractService.dismissalWork(contractId,finishContractDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

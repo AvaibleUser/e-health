@@ -1,6 +1,7 @@
 package org.ehealth.hr.domain.dto;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ public record NewContractDto(
         @Positive Long idContract,
         @Positive Long idEmployee,
         @Positive BigDecimal salary,
-        @Positive BigDecimal igssDiscount,
-        @Positive BigDecimal irtraDiscount
+        @PositiveOrZero BigDecimal igssDiscount,
+        @PositiveOrZero BigDecimal irtraDiscount
 ) {
 }

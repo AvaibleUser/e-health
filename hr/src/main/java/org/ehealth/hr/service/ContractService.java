@@ -129,6 +129,18 @@ public class ContractService implements IContractService {
         contractRepository.save(newContract);
     }
 
+    @Override
+    @Transactional
+    public void dismissalWork(Long idContract, FinishContractDto finishContractDto){
+        FinishContract finishContract = FinishContract
+                .builder()
+                .terminationReason(ContractEntity.TerminationReason.DESPIDO)
+                .description(finishContractDto.description())
+                .idContract(idContract)
+                .date(LocalDate.now())
+                .build();
 
+        this.finishContract(finishContract);
+    }
 
 }

@@ -12,5 +12,6 @@ public interface IContractService {
     void createNewContract(NewContractDto newContractDto);
     void finishContract(Long idContract, FinishContractDto finishContractDto);
     void updateSalary(Long idContract, UpdateSalaryDto updateSalaryDto);
+    void dismissalWork(Long idContract, FinishContractDto finishContractDto);
 
 }
