@@ -1,4 +1,4 @@
-package org.ehealth.hr.domain;
+package org.ehealth.hr.domain.dto;
 
 import lombok.Builder;
 import org.ehealth.hr.domain.entity.ContractEntity;

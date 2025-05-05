@@ -1,7 +1,7 @@
 package org.ehealth.hr.service;
 
 import lombok.RequiredArgsConstructor;
-import org.ehealth.hr.domain.FinishContract;
+import org.ehealth.hr.domain.dto.FinishContract;
 import org.ehealth.hr.domain.dto.*;
 import org.ehealth.hr.domain.entity.ContractEntity;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -142,5 +143,11 @@ public class ContractService implements IContractService {
 
         this.finishContract(finishContract);
     }
+
+    @Override
+    public List<ContractDto> findAllContractsOrderedByCreationDate(Long employeeId) {
+        return contractRepository.findAllByEmployeeIdOrderByCreatedAtDesc(employeeId,ContractDto.class);
+    }
+
 
 }

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/contracts")
 @RequiredArgsConstructor
@@ -47,4 +49,11 @@ public class ContractController {
         contractService.dismissalWork(contractId,finishContractDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping("/history/employee/{employeeId}")
+    public ResponseEntity<List<ContractDto>> getAllContracts(@PathVariable Long employeeId) {
+        List<ContractDto> contracts = contractService.findAllContractsOrderedByCreationDate(employeeId);
+        return ResponseEntity.ok(contracts);
+    }
+
 }
