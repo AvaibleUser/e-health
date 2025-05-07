@@ -76,6 +76,7 @@ public class BillItemEntity {
     public static enum BillItemType {
         HOSPITALIZED,
         SURGERY,
-        CONSULTATION
+        CONSULTATION,
+        MEDICATION,
     }
 }

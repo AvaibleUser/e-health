@@ -15,6 +15,7 @@ services:
 
     ports:
       - 8000:8000
+      - 5000:5005
 
     volumes:
       - ./frontdoor/build/libs/frontdoor-0.0.1-SNAPSHOT.jar:/app/e-health.jar
@@ -28,8 +29,10 @@ services:
 
     env_file:
       - ./gatekeeper/.env
+
     ports:
       - 8001:8001
+      - 5001:5005
 
     volumes:
       - ./gatekeeper/build/libs/gatekeeper-0.0.1-SNAPSHOT.jar:/app/e-health.jar
@@ -46,6 +49,7 @@ services:
 
     ports:
       - 8002:8002
+      - 5002:5005
 
     volumes:
       - ./hr/build/libs/hr-0.0.1-SNAPSHOT.jar:/app/e-health.jar
@@ -62,6 +66,7 @@ services:
 
     ports:
       - 8003:8003
+      - 5003:5005
 
     volumes:
       - ./ward/build/libs/ward-0.0.1-SNAPSHOT.jar:/app/e-health.jar
@@ -78,6 +83,7 @@ services:
 
     ports:
       - 8004:8004
+      - 5004:5005
 
     volumes:
       - ./rx/build/libs/rx-0.0.1-SNAPSHOT.jar:/app/e-health.jar

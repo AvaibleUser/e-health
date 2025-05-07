@@ -40,7 +40,7 @@ public class RoomEntity {
 
     @NonNull
     @Column(nullable = false, unique = true)
-    private String roomNumber;
+    private String number;
 
     private BigDecimal costPerDay;
 

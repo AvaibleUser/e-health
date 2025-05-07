@@ -17,7 +17,7 @@ CREATE TABLE ward.patient
 CREATE TABLE ward.room
 (
     id BIGSERIAL PRIMARY KEY,
-    room_number VARCHAR(255) NOT NULL UNIQUE,
+    number VARCHAR(255) NOT NULL UNIQUE,
     cost_per_day NUMERIC(10, 2) NOT NULL,
     is_occupied BOOLEAN NOT NULL DEFAULT FALSE,
     under_maintenance BOOLEAN NOT NULL DEFAULT FALSE,
@@ -110,7 +110,8 @@ CREATE TABLE finance.bill
 CREATE TYPE finance.bill_item_type_enum AS ENUM (
     'HOSPITALIZED',
     'SURGERY',
-    'CONSULTATION'
+    'CONSULTATION',
+    'MEDICATION'
 );
 
 CREATE TABLE finance.bill_item
