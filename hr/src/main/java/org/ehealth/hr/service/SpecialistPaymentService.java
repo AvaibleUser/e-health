@@ -1,5 +1,6 @@
 package org.ehealth.hr.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.hr.client.SurgeryClient;
 import org.ehealth.hr.domain.dto.EmployeeDto;
@@ -8,6 +9,7 @@ import org.ehealth.hr.domain.dto.or.SpecialistPaymentDto;
 import org.ehealth.hr.domain.dto.or.SurgeryPaymentDto;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
 import org.ehealth.hr.domain.entity.SpecialistPaymentEntity;
+import org.ehealth.hr.domain.exception.RequestConflictException;
 import org.ehealth.hr.domain.exception.ValueNotFoundException;
 import org.ehealth.hr.repository.EmployeeRepository;
 import org.ehealth.hr.repository.SpecialistPaymentRepository;
@@ -29,7 +31,14 @@ public class SpecialistPaymentService implements ISpecialistPaymentService {
 
     @Override
     public List<PaymentPerSurgeryDto> getPaymentPerSurgery() {
-        List<SurgeryPaymentDto> surgeryPaymentDtos = this.surgeryClient.getSurgeryPayments();
+
+        List<SurgeryPaymentDto> surgeryPaymentDtos;
+        try {
+            surgeryPaymentDtos = this.surgeryClient.getSurgeryPayments();
+        } catch (FeignException e) {
+            throw new RequestConflictException("No se ha podido obtener las cirugias, intente mas tarde");
+        }
+
         List<EmployeeDto> employeeDtos = this.employeeRepository.findAllBySpecialistTrueOrderByCreatedAtDesc(EmployeeDto.class);
         List<SpecialistPaymentDto> specialistPaymentDtos = this.specialistPaymentRepository.findAllSpecialistPayments();
 
@@ -68,8 +77,16 @@ public class SpecialistPaymentService implements ISpecialistPaymentService {
         EmployeeEntity employee = this.employeeRepository.findById(surgeryPaymentDto.employeeId())
                 .orElseThrow(() -> new ValueNotFoundException("Empleado especialista no encontrado para el pago"));
 
-        if (this.surgeryClient.existSurge(surgeryPaymentDto.id())){
-            throw new ValueNotFoundException("El surgery no existe");
+        boolean exist;
+
+        try {
+            exist = this.surgeryClient.existSurge(surgeryPaymentDto.id());
+        } catch (FeignException e) {
+            throw new RequestConflictException("No se ha podido encontrar la cirugia que intenta pagar, intente mas tarde");
+        }
+
+        if (!exist){
+            throw new ValueNotFoundException("La cirucia que intenta pagar no existe");
         }
 
         SpecialistPaymentEntity paymentEntity = SpecialistPaymentEntity

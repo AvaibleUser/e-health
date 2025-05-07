@@ -1,5 +1,6 @@
 package org.ehealth.ward.controller;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.ward.domain.dto.or.SurgeryPaymentDto;
 import org.ehealth.ward.service.ISurgeryService;
@@ -16,11 +17,13 @@ import java.util.List;
 public class SurgeryController {
     private final ISurgeryService surgeryService;
 
+    @PermitAll
     @GetMapping(value = "/payments")
     public List<SurgeryPaymentDto> getSurgeryPaymentDto(){
         return surgeryService.getSurgeryPaymentDto();
     }
 
+    @PermitAll
     @GetMapping(value = "/exist/{specialistId}")
     public boolean existSurgeryPayment(@PathVariable Long specialistId) {
         return surgeryService.existSurgeryPayment(specialistId);
