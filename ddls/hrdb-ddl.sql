@@ -1,5 +1,6 @@
 CREATE SCHEMA hr;
 
+
 CREATE TABLE hr.area (
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
@@ -24,6 +25,8 @@ CREATE TABLE hr.contract (
   salary NUMERIC(10,2) NOT NULL,
   igss_discount NUMERIC(10,2),
   irtra_discount NUMERIC(10,2),
+  termination_reason VARCHAR,
+  termination_description TEXT,
   start_date DATE NOT NULL,
   end_date DATE,
   employee_id BIGINT NOT NULL REFERENCES hr.employee (id),
@@ -37,7 +40,7 @@ CREATE TABLE hr.vacation (
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   approved BOOLEAN NOT NULL DEFAULT FALSE,
-  finalized BOOLEAN NOT NULL DEFAULT FALSE,
+  state VARCHAR NOT NULL DEFAULT 'PENDIENTE'
   employee_id BIGINT NOT NULL REFERENCES hr.employee (id),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP
