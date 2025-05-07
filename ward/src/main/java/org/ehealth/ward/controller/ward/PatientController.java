@@ -1,20 +1,19 @@
-package org.ehealth.ward.controller;
+package org.ehealth.ward.controller.ward;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-import jakarta.validation.constraints.Positive;
-import org.ehealth.ward.domain.dto.patient.AddPatientDto;
-import org.ehealth.ward.domain.dto.patient.PatientDto;
-import org.ehealth.ward.domain.dto.patient.UpdatePatientDto;
-import org.ehealth.ward.service.IPatientService;
+import org.ehealth.ward.domain.dto.ward.patient.AddPatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.PatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.UpdatePatientDto;
+import org.ehealth.ward.service.ward.IPatientService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,7 +47,7 @@ public class PatientController {
         patientService.addPatient(patient);
     }
 
-    @PutMapping("/{patientId}")
+    @PatchMapping("/{patientId}")
     @ResponseStatus(NO_CONTENT)
     public void updatePatient(@PathVariable long patientId, @RequestBody UpdatePatientDto patient) {
         patientService.updatePatient(patientId, patient);
