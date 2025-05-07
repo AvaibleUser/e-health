@@ -32,4 +32,6 @@ COPY --chown=$OWNER:$OWNER ./build/libs/*.jar /app/e-health.jar
 
 USER $OWNER
 
-ENTRYPOINT ["java", "-jar", "e-health.jar"]
+EXPOSE 5005
+
+ENTRYPOINT ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-jar", "/app/e-health.jar"]

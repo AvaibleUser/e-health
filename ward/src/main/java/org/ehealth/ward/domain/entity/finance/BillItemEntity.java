@@ -52,13 +52,13 @@ public class BillItemEntity {
     @Enumerated(EnumType.STRING)
     private BillItemType type = BillItemType.CONSULTATION;
 
-    @NonNull
-    @ManyToOne(optional = false)
+    private Long saleId;
+
+    @ManyToOne
     @JoinColumn(name = "admission_id")
     private AdmissionEntity admission;
 
-    @NonNull
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "surgery_id")
     private SurgeryEntity surgery;
 
@@ -76,6 +76,7 @@ public class BillItemEntity {
     public static enum BillItemType {
         HOSPITALIZED,
         SURGERY,
-        CONSULTATION
+        CONSULTATION,
+        MEDICATION,
     }
 }

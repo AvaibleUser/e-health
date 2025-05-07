@@ -47,6 +47,10 @@ public class BillEntity {
 
     private BigDecimal total;
 
+    private boolean isClosed;
+
+    private boolean isPaid;
+
     @OneToMany(mappedBy = "bill")
     private Set<BillItemEntity> billItems;
 
