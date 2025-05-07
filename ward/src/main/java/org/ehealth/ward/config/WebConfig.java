@@ -3,7 +3,7 @@ package org.ehealth.ward.config;
 import java.util.List;
 
 import org.ehealth.ward.client.AuthClient;
-import org.ehealth.ward.domain.dto.auth.UserDto;
+import org.ehealth.ward.domain.dto.client.auth.UserDto;
 import org.ehealth.ward.util.annotation.CurrentUser;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

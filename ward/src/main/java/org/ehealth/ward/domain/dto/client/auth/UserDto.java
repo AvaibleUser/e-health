@@ -1,4 +1,4 @@
-package org.ehealth.ward.domain.dto.auth;
+package org.ehealth.ward.domain.dto.client.auth;
 
 import java.time.Instant;
 

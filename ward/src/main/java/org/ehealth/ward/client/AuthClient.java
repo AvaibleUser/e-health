@@ -1,6 +1,6 @@
 package org.ehealth.ward.client;
 
-import org.ehealth.ward.domain.dto.auth.UserDto;
+import org.ehealth.ward.domain.dto.client.auth.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 

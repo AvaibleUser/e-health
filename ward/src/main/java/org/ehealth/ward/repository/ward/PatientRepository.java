@@ -1,8 +1,8 @@
-package org.ehealth.ward.repository;
+package org.ehealth.ward.repository.ward;
 
 import java.util.Optional;
 
-import org.ehealth.ward.domain.dto.patient.PatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.PatientDto;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

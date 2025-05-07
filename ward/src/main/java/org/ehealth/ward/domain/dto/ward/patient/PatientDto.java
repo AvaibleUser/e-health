@@ -1,4 +1,4 @@
-package org.ehealth.ward.domain.dto.patient;
+package org.ehealth.ward.domain.dto.ward.patient;
 
 import java.time.Instant;
 import java.time.LocalDate;
