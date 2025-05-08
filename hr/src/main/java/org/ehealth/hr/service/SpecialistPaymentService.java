@@ -2,7 +2,7 @@ package org.ehealth.hr.service;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.ehealth.hr.client.SurgeryClient;
+import org.ehealth.hr.client.PatientClient;
 import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.or.PaymentPerSurgeryDto;
 import org.ehealth.hr.domain.dto.or.SpecialistPaymentDto;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class SpecialistPaymentService implements ISpecialistPaymentService {
 
     private final SpecialistPaymentRepository specialistPaymentRepository;
-    private final SurgeryClient surgeryClient;
+    private final PatientClient patientClient;
     private final EmployeeRepository employeeRepository;
 
     @Override
@@ -34,12 +34,12 @@ public class SpecialistPaymentService implements ISpecialistPaymentService {
 
         List<SurgeryPaymentDto> surgeryPaymentDtos;
         try {
-            surgeryPaymentDtos = this.surgeryClient.getSurgeryPayments();
+            surgeryPaymentDtos = this.patientClient.getSurgeryPayments();
         } catch (FeignException e) {
             throw new RequestConflictException("No se ha podido obtener las cirugias, intente mas tarde");
         }
 
-        List<EmployeeDto> employeeDtos = this.employeeRepository.findAllBySpecialistTrueOrderByCreatedAtDesc(EmployeeDto.class);
+        List<EmployeeDto> employeeDtos = this.employeeRepository.findAllByIsSpecialistTrueOrderByCreatedAtDesc(EmployeeDto.class);
         List<SpecialistPaymentDto> specialistPaymentDtos = this.specialistPaymentRepository.findAllSpecialistPayments();
 
         List<PaymentPerSurgeryDto> paymentPerSurgeryDtos = new ArrayList<>();
@@ -80,7 +80,7 @@ public class SpecialistPaymentService implements ISpecialistPaymentService {
         boolean exist;
 
         try {
-            exist = this.surgeryClient.existSurge(surgeryPaymentDto.id());
+            exist = this.patientClient.existSurge(surgeryPaymentDto.id());
         } catch (FeignException e) {
             throw new RequestConflictException("No se ha podido encontrar la cirugia que intenta pagar, intente mas tarde");
         }

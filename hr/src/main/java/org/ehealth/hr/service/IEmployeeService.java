@@ -2,9 +2,11 @@ package org.ehealth.hr.service;
 
 import org.ehealth.hr.domain.dto.CreateEmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
+import org.ehealth.hr.domain.dto.reports.ReportAssignedEmployeeDto;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
 import org.ehealth.hr.domain.dto.EmployeeDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IEmployeeService {
@@ -13,4 +15,5 @@ public interface IEmployeeService {
     EmployeeDto findEmployeeByCui(String cui);
     List<EmployeeDto> findAllEmployeesOrdered();
     List<EmployeeDto> findEmployeesByArea(Long areaId);
+    ReportAssignedEmployeeDto getReportAssignedEmployeeInRange(Integer filter, String startDate, String endDate);
 }
