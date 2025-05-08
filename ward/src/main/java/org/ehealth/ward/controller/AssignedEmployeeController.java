@@ -23,8 +23,8 @@ public class AssignedEmployeeController {
     @PermitAll
     @GetMapping("/report/doctors")
     public List<AssignedEmployeeReportDto> getDoctorsAssignedReport(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         return assignedEmployeeService.getAssignedDoctorsReport(startDate, endDate);
     }
