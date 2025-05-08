@@ -39,4 +39,49 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
     """)
     List<ContractDto> findAllContractsBetweenDates(@Param("startDate") LocalDate startDate,
                                                            @Param("endDate") LocalDate endDate);
+
+    @Query("""
+    SELECT new org.ehealth.hr.domain.dto.ContractDto(
+        c.id,
+        c.employee.id,
+        c.salary,
+        c.igssDiscount,
+        c.irtraDiscount,
+        c.terminationReason,
+        c.terminationDescription,
+        c.startDate,
+        c.endDate,
+        c.createdAt,
+        c.updatedAt
+    ) FROM contract c
+    WHERE c.startDate BETWEEN :startDate AND :endDate
+      AND c.terminationReason IS NOT NULL
+      AND c.terminationReason IN (org.ehealth.hr.domain.entity.ContractEntity.TerminationReason.DESPIDO,
+                                  org.ehealth.hr.domain.entity.ContractEntity.TerminationReason.FIN_CONTRATO)
+    ORDER BY c.createdAt DESC
+    """)
+    List<ContractDto> findTerminatedContractsBetweenDates(@Param("startDate") LocalDate startDate,
+                                                          @Param("endDate") LocalDate endDate);
+
+    @Query("""
+    SELECT new org.ehealth.hr.domain.dto.ContractDto(
+        c.id,
+        c.employee.id,
+        c.salary,
+        c.igssDiscount,
+        c.irtraDiscount,
+        c.terminationReason,
+        c.terminationDescription,
+        c.startDate,
+        c.endDate,
+        c.createdAt,
+        c.updatedAt
+    ) FROM contract c
+    WHERE c.terminationReason IS NOT NULL
+      AND c.terminationReason IN (org.ehealth.hr.domain.entity.ContractEntity.TerminationReason.DESPIDO,
+                                  org.ehealth.hr.domain.entity.ContractEntity.TerminationReason.FIN_CONTRATO)
+    ORDER BY c.createdAt DESC
+    """)
+    List<ContractDto> findTerminatedContracts();
+
 }

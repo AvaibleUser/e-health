@@ -70,4 +70,15 @@ public class ContractController {
         return ResponseEntity.ok(report);
     }
 
+    @GetMapping("reports/employees/history/terminated/{areaId}")
+    public ResponseEntity<ReportEmployeeContracts> getReportTerminatedContracts(
+            @PathVariable Long areaId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+
+        ReportEmployeeContracts report = contractService.reportTerminatedContracts(areaId, startDate, endDate);
+        return ResponseEntity.ok(report);
+    }
+
 }

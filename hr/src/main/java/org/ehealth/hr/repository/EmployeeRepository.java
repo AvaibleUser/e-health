@@ -16,8 +16,10 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
 
     <T> List<T> findAllByOrderByCreatedAtDesc(Class<T> type);
 
-    <T> List<T> findAllBySpecialistTrueOrderByCreatedAtDesc(Class<T> type);
+    <T> List<T> findAllByIsSpecialistTrueOrderByCreatedAtDesc(Class<T> type);
 
     <T> List<T> findAllByAreaIdOrderByCreatedAtDesc(Long areaId, Class<T> type);
+
+    <T> List<T> findAllByIsSpecialistFalseOrderByCreatedAtDesc(Class<T> type);
 
 }
