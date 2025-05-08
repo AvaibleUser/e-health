@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 public record ContractDto(
         Long id,
+        Long employeeId,
         BigDecimal salary,
         BigDecimal igssDiscount,
         BigDecimal irtraDiscount,
@@ -25,6 +26,7 @@ public record ContractDto(
         return ContractDto
                 .builder()
                 .id(entity.getId())
+                .employeeId(entity.getEmployee().getId())
                 .salary(entity.getSalary())
                 .igssDiscount(entity.getIgssDiscount())
                 .irtraDiscount(entity.getIrtraDiscount())

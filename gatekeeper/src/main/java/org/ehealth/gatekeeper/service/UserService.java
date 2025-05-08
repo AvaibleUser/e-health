@@ -50,6 +50,7 @@ public class UserService implements IUserService {
         try {
             employeeClient.findEmployeeByCui(user.cui());
         } catch (FeignException e) {
+            e.printStackTrace();
             throw new RequestConflictException("El CUI que se intenta registrar no existe en pantilla de empelados");
         }
 

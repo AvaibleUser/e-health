@@ -6,11 +6,14 @@ import org.ehealth.hr.domain.dto.ContractDto;
 import org.ehealth.hr.domain.dto.FinishContractDto;
 import org.ehealth.hr.domain.dto.NewContractDto;
 import org.ehealth.hr.domain.dto.UpdateSalaryDto;
+import org.ehealth.hr.domain.dto.reports.ReportEmployeeContracts;
 import org.ehealth.hr.service.IContractService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -54,6 +57,17 @@ public class ContractController {
     public ResponseEntity<List<ContractDto>> getAllContracts(@PathVariable Long employeeId) {
         List<ContractDto> contracts = contractService.findAllContractsOrderedByCreationDate(employeeId);
         return ResponseEntity.ok(contracts);
+    }
+
+    @GetMapping("reports/employees/history/{areaId}")
+    public ResponseEntity<ReportEmployeeContracts> getEmployeeContractReport(
+            @PathVariable Long areaId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+
+        ReportEmployeeContracts report = contractService.reportEmployeeContracts(areaId, startDate, endDate);
+        return ResponseEntity.ok(report);
     }
 
 }
