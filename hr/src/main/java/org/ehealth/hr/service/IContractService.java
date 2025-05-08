@@ -19,4 +19,7 @@ public interface IContractService {
     void dismissalWork(Long idContract, FinishContractDto finishContractDto);
     List<ContractDto> findAllContractsOrderedByCreationDate(Long employeeId) ;
     ReportEmployeeContracts reportEmployeeContracts(Long areaId, LocalDate startDate, LocalDate endDate);
+    List<EmployeeDto> findAllEmployees(Long areaId);
+    ReportEmployeeContracts constructReport(List<EmployeeDto> employees, List<ContractDto> contracts );
+    ReportEmployeeContracts reportTerminatedContracts(Long areaId, LocalDate startDate, LocalDate endDate);
 }

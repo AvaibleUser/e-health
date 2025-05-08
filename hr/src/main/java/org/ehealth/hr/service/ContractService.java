@@ -155,23 +155,21 @@ public class ContractService implements IContractService {
     }
 
     @Override
-    @Transactional
-    public ReportEmployeeContracts reportEmployeeContracts(Long areaId, LocalDate startDate, LocalDate endDate) {
-        // 1. Obtener lista de empleados filtrando por área si aplica
-        List<EmployeeDto> employees = (areaId == null || areaId <= 0)
+    public List<EmployeeDto> findAllEmployees(Long areaId) {
+        // Obtener lista de empleados filtrando por área si aplica
+
+        return (areaId == null || areaId <= 0)
                 ? this.employeeRepository.findAllByOrderByCreatedAtDesc(EmployeeDto.class)
                 : this.employeeRepository.findAllByAreaIdOrderByCreatedAtDesc(areaId, EmployeeDto.class);
+    }
 
-        // 2. Obtener lista de contratos, filtrando por fechas si se proporcionan
-        List<ContractDto> contracts = (startDate == null || endDate == null)
-                ? this.contractRepository.findAllByOrderByCreatedAtDesc(ContractDto.class)
-                : this.contractRepository.findAllContractsBetweenDates(startDate, endDate);
-
-        // 3. Agrupar contratos por ID de empleado
+    @Override
+    public ReportEmployeeContracts constructReport(List<EmployeeDto> employees, List<ContractDto> contracts ) {
+        // Agrupar contratos por ID de empleado
         Map<Long, List<ContractDto>> contractsByEmployeeId = contracts.stream()
                 .collect(Collectors.groupingBy(ContractDto::employeeId));
 
-        // 4. Mapear solo empleados que tengan al menos un contrato
+        // Mapear solo empleados que tengan al menos un contrato
         List<HistoryEmployeeContractsDto> history = employees.stream()
                 .filter(emp -> contractsByEmployeeId.containsKey(emp.id())) // solo empleados con contratos
                 .map(emp -> HistoryEmployeeContractsDto.builder()
@@ -184,10 +182,39 @@ public class ContractService implements IContractService {
                         .build())
                 .toList();
 
-        // 5. Devolver reporte
+        // Devolver reporte
         return ReportEmployeeContracts.builder()
                 .report(history)
                 .build();
     }
+
+    @Override
+    @Transactional
+    public ReportEmployeeContracts reportEmployeeContracts(Long areaId, LocalDate startDate, LocalDate endDate) {
+
+        List<EmployeeDto> employees = findAllEmployees(areaId);
+
+        // Obtener lista de contratos, filtrando por fechas si se proporcionan
+        List<ContractDto> contracts = (startDate == null || endDate == null)
+                ? this.contractRepository.findAllByOrderByCreatedAtDesc(ContractDto.class)
+                : this.contractRepository.findAllContractsBetweenDates(startDate, endDate);
+
+        return this.constructReport(employees, contracts);
+
+    }
+
+    @Override
+    public ReportEmployeeContracts reportTerminatedContracts(Long areaId, LocalDate startDate, LocalDate endDate){
+        List<EmployeeDto> employees = findAllEmployees(areaId);
+
+        // Obtener lista de contratos, filtrando por fechas si se proporcionan
+        List<ContractDto> contracts = (startDate == null || endDate == null)
+                ? this.contractRepository.findTerminatedContracts()
+                : this.contractRepository.findTerminatedContractsBetweenDates(startDate, endDate);
+
+        return this.constructReport(employees, contracts);
+
+    }
+
 
 }
