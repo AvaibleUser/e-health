@@ -63,8 +63,8 @@ public class EmployeeController {
     @GetMapping("/assigned/report/doctors/{filter}")
     public ResponseEntity<ReportAssignedEmployeeDto> getAssignedReport(
             @PathVariable Integer filter,
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate
     ) {
         ReportAssignedEmployeeDto report = employeeService.getReportAssignedEmployeeInRange(filter, startDate, endDate);
         return ResponseEntity.ok(report);
