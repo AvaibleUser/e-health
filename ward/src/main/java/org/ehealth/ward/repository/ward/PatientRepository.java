@@ -22,7 +22,7 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, J
     <T> Page<T> findAllPageableBy(Pageable pageable, Class<T> type);
 
     @Query("""
-            SELECT new org.ehealth.ward.domain.dto.patient.PatientDto(
+            SELECT new org.ehealth.ward.domain.dto.ward.patient.PatientDto(
                 p.id,
                 p.fullName,
                 p.cui,

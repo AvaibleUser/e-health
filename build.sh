@@ -40,6 +40,8 @@ execute_build() {
     else
       printf "Levantando contenedores\n"
       docker compose up -d
+      printf "Iniciando watch\n"
+      docker compose watch --no-up &
     fi
   fi
 }

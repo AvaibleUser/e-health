@@ -50,9 +50,17 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> findAllEmployees() {
-        List<EmployeeDto> employees = employeeService.findAllEmployeesOrdered();
+    public ResponseEntity<List<EmployeeDto>> findAllEmployees(@RequestParam(required = false) List<Long> byIds) {
+        List<EmployeeDto> employees = byIds == null
+                ? employeeService.findAllEmployeesOrdered()
+                : employeeService.findEmployeesByIds(byIds);
+
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/assignable")
+    public List<EmployeeDto> findAssignableEmployees() {
+        return employeeService.findAssignableEmployees();
     }
 
     @GetMapping("/area/{areaId}")
@@ -75,8 +83,7 @@ public class EmployeeController {
     public ResponseEntity<ReportAssignedEmployeeDto> getAssignedReport(
             @PathVariable Integer filter,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate
-    ) {
+            @RequestParam(required = false) String endDate) {
         ReportAssignedEmployeeDto report = employeeService.getReportAssignedEmployeeInRange(filter, startDate, endDate);
         return ResponseEntity.ok(report);
     }

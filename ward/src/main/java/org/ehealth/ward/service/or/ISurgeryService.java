@@ -1,4 +1,4 @@
-package org.ehealth.ward.service;
+package org.ehealth.ward.service.or;
 
 import org.ehealth.ward.domain.dto.or.SurgeryPaymentDto;
 

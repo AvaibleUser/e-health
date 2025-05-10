@@ -1,17 +1,18 @@
-package org.ehealth.ward.controller;
+package org.ehealth.ward.controller.ward;
 
-import jakarta.annotation.security.PermitAll;
-import lombok.RequiredArgsConstructor;
-import org.ehealth.ward.domain.dto.ward.AssignedEmployeeReportDto;
-import org.ehealth.ward.service.IAssignedEmployeeService;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.ehealth.ward.domain.dto.ward.employee.AssignedEmployeeReportDto;
+import org.ehealth.ward.domain.dto.ward.employee.CompleteEmployeeDto;
+import org.ehealth.ward.service.ward.IAssignedEmployeeService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/v1/assigned-employees")
@@ -20,7 +21,6 @@ public class AssignedEmployeeController {
 
     private final IAssignedEmployeeService assignedEmployeeService;
 
-    @PermitAll
     @GetMapping("/report/doctors")
     public List<AssignedEmployeeReportDto> getDoctorsAssignedReport(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -28,5 +28,9 @@ public class AssignedEmployeeController {
 
         return assignedEmployeeService.getAssignedDoctorsReport(startDate, endDate);
     }
-}
 
+    @GetMapping("/assignable")
+    public List<CompleteEmployeeDto> getAssignableEmployees() {
+        return assignedEmployeeService.getAssignableEmployees();
+    }
+}
