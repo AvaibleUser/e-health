@@ -18,7 +18,7 @@ CREATE TABLE ward.room
 (
     id BIGSERIAL PRIMARY KEY,
     number VARCHAR(255) NOT NULL UNIQUE,
-    cost_per_day NUMERIC(10, 2) NOT NULL,
+    cost_per_day NUMERIC(10, 2),
     is_occupied BOOLEAN NOT NULL DEFAULT FALSE,
     under_maintenance BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -35,7 +35,7 @@ CREATE TABLE ward.admission
     id BIGSERIAL PRIMARY KEY,
     admission_date DATE NOT NULL,
     discharge_date DATE,
-    status ward.admission_status_enum NOT NULL DEFAULT 'ADMITTED',
+    status VARCHAR(255) NOT NULL DEFAULT 'ADMITTED',
     patient_id BIGINT NOT NULL REFERENCES ward.patient (id),
     room_id BIGINT NOT NULL REFERENCES ward.room (id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -52,7 +52,7 @@ CREATE TABLE ward.assigned_employee
 (
     id BIGSERIAL PRIMARY KEY,
     employee_id BIGINT NOT NULL,
-    type ward.assigned_employee_type_enum NOT NULL DEFAULT 'DOCTOR',
+    type VARCHAR(255) NOT NULL DEFAULT 'DOCTOR',
     admission_id BIGINT NOT NULL REFERENCES ward.admission (id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP

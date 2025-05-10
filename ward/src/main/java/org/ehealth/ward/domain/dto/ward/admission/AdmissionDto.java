@@ -1,5 +1,6 @@
 package org.ehealth.ward.domain.dto.ward.admission;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -11,11 +12,11 @@ import lombok.Builder;
 public record AdmissionDto(
         Long id,
         LocalDate admissionDate,
-        String dischargeDate,
+        LocalDate dischargeDate,
         AdmissionStatus status,
         Long roomId,
         String roomNumber,
-        Float roomCostPerDay,
+        BigDecimal roomCostPerDay,
         Instant createdAt,
         Instant updatedAt) {
 }

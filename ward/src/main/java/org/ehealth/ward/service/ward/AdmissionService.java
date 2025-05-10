@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.ward.admission.AddAdmissionDto;
 import org.ehealth.ward.domain.dto.ward.admission.AdmissionDto;
+import org.ehealth.ward.domain.dto.ward.admission.UpdateAdmissionDto;
 import org.ehealth.ward.domain.entity.ward.AdmissionEntity;
-import org.ehealth.ward.domain.entity.ward.AdmissionEntity.AdmissionStatus;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.entity.ward.RoomEntity;
 import org.ehealth.ward.domain.exception.RequestConflictException;
@@ -14,6 +14,7 @@ import org.ehealth.ward.domain.exception.ValueNotFoundException;
 import org.ehealth.ward.repository.ward.AdmissionRepository;
 import org.ehealth.ward.repository.ward.PatientRepository;
 import org.ehealth.ward.repository.ward.RoomRepository;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,13 @@ public class AdmissionService implements IAdmissionService {
     private final RoomRepository roomRepository;
 
     @Override
-    public Optional<AdmissionDto> findAdmissionById(long id) {
-        return admissionRepository.findById(id, AdmissionDto.class);
+    public Optional<AdmissionDto> findAdmissionByAdmitted(long patientId) {
+        return admissionRepository.findByPatientIdAndIsAdmitted(patientId);
+    }
+
+    @Override
+    public Optional<AdmissionDto> findAdmissionById(long patientId, long admissionId) {
+        return admissionRepository.findByIdAndPatientId(admissionId, patientId, AdmissionDto.class);
     }
 
     @Override
@@ -42,9 +48,9 @@ public class AdmissionService implements IAdmissionService {
     @Override
     @Transactional
     public void addAdmission(long patientId, AddAdmissionDto admission) {
-        if (admissionRepository.existsByPatientIdAndStatusIsAdmitted(patientId)) {
+        admissionRepository.findByPatientIdAndIsAdmitted(patientId).ifPresent(admissionEntity -> {
             throw new RequestConflictException("El paciente ya esta internado");
-        }
+        });
 
         PatientEntity patient = patientRepository.findById(patientId).orElseThrow(
                 () -> new ValueNotFoundException("No se encontro el paciente con id " + patientId));
@@ -52,29 +58,60 @@ public class AdmissionService implements IAdmissionService {
         RoomEntity room = roomRepository.findById(admission.roomId())
                 .orElseThrow(() -> new ValueNotFoundException("No se encontro la sala con id " + admission.roomId()));
 
-        if (room.isOccupied() || room.isUnderMaintenance()) {
-            throw new RequestConflictException("La sala seleccionada ya esta ocupada o en mantenimiento");
+        Hibernate.initialize(room.getAdmissions());
+        if (room.getAdmissions()
+                .stream()
+                .map(AdmissionEntity::getDischargeDate)
+                .anyMatch(date -> date == null || date.isAfter(LocalDate.now()))) {
+            throw new RequestConflictException("La sala seleccionada ya esta ocupada");
+        }
+        if (room.isUnderMaintenance()) {
+            throw new RequestConflictException("La sala seleccionada esta en mantenimiento");
         }
 
-        admissionRepository.save(AdmissionEntity.builder()
+        AdmissionEntity newAdmission = AdmissionEntity.builder()
                 .admissionDate(admission.admissionDate())
                 .dischargeDate(admission.dischargeDate())
                 .patient(patient)
                 .room(room)
-                .build());
+                .build();
+
+        admissionRepository.save(newAdmission);
     }
 
     @Override
     @Transactional
-    public void markAsDischarged(long id, long patientId) {
-        AdmissionEntity admissionEntity = admissionRepository.findByIdAndPatientId(id, patientId, AdmissionEntity.class)
-                .orElseThrow(() -> new ValueNotFoundException("No se encontro el paciente con id " + id));
+    public void updateAdmission(long id, long patientId, UpdateAdmissionDto admission) {
+        Long currentAdmissionId = admissionRepository
+                .findByPatientIdAndIsAdmitted(patientId)
+                .map(AdmissionDto::id)
+                .orElseThrow(() -> new ValueNotFoundException("El paciente no esta internado"));
 
-        if (admissionEntity.getStatus() != AdmissionStatus.ADMITTED) {
-            throw new RequestConflictException("El paciente no esta internado");
+        if (currentAdmissionId != id) {
+            throw new ValueNotFoundException("La hospitalizacion ya ha sido finalizada");
         }
-        admissionEntity.setDischargeDate(LocalDate.now());
-        admissionEntity.setStatus(AdmissionStatus.DISCHARGED);
+        AdmissionEntity admissionEntity = admissionRepository.findByIdAndPatientId(id, patientId, AdmissionEntity.class)
+                .orElseThrow(() -> new ValueNotFoundException("No se encontro la hospitalizacion con id " + id));
+
+        admission.dischargeDate().ifPresent(dischargeDate -> admissionEntity.setDischargeDate(dischargeDate));
+        admission.roomId()
+                .map(roomId -> {
+                    RoomEntity room = roomRepository.findById(roomId)
+                            .orElseThrow(() -> new ValueNotFoundException("No se encontro la sala con id " + roomId));
+
+                    Hibernate.initialize(room.getAdmissions());
+                    if (room.getAdmissions()
+                            .stream()
+                            .map(AdmissionEntity::getDischargeDate)
+                            .anyMatch(date -> date == null || date.isAfter(LocalDate.now()))) {
+                        throw new RequestConflictException("La sala seleccionada ya esta ocupada");
+                    }
+                    if (room.isUnderMaintenance()) {
+                        throw new RequestConflictException("La sala seleccionada esta en mantenimiento");
+                    }
+                    return room;
+                })
+                .ifPresent(admissionEntity::setRoom);
 
         admissionRepository.save(admissionEntity);
     }

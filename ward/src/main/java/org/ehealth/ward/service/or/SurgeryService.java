@@ -1,8 +1,8 @@
-package org.ehealth.ward.service;
+package org.ehealth.ward.service.or;
 
 import lombok.RequiredArgsConstructor;
 import org.ehealth.ward.domain.dto.or.SurgeryPaymentDto;
-import org.ehealth.ward.repository.SurgeryRepository;
+import org.ehealth.ward.repository.or.SurgeryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

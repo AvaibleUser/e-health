@@ -1,4 +1,4 @@
-package org.ehealth.ward.repository;
+package org.ehealth.ward.repository.or;
 
 import org.ehealth.ward.domain.dto.or.SurgeryPaymentDto;
 import org.ehealth.ward.domain.entity.or.SurgeryEntity;
