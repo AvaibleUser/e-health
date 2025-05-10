@@ -1,5 +1,6 @@
 package org.ehealth.gatekeeper.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.ehealth.gatekeeper.domain.entity.UserEntity;
@@ -16,4 +17,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<?> findUnknownById(long id, Class<?> type);
 
     <U> Optional<U> findByEmail(String email, Class<U> type);
+
+    <T> List<T> findAllByActiveTrueOrderByCreatedAtDesc(Class<T> type);
+
+    <T> List<T> findAllByActiveFalseOrderByCreatedAtDesc(Class<T> type);
+
 }

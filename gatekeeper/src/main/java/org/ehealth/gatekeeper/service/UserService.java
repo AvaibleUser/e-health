@@ -1,10 +1,16 @@
 package org.ehealth.gatekeeper.service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.ehealth.gatekeeper.client.EmployeeClient;
 import org.ehealth.gatekeeper.domain.dto.AddUserDto;
 import org.ehealth.gatekeeper.domain.dto.UserDto;
+import org.ehealth.gatekeeper.domain.dto.employee.EmployeeDto;
+import org.ehealth.gatekeeper.domain.dto.employee.UserEmployeeDto;
 import org.ehealth.gatekeeper.domain.entity.RoleEntity;
 import org.ehealth.gatekeeper.domain.entity.UserEntity;
 import org.ehealth.gatekeeper.domain.exception.RequestConflictException;
@@ -50,7 +56,6 @@ public class UserService implements IUserService {
         try {
             employeeClient.findEmployeeByCui(user.cui());
         } catch (FeignException e) {
-            e.printStackTrace();
             throw new RequestConflictException("El CUI que se intenta registrar no existe en pantilla de empelados");
         }
 
@@ -68,4 +73,80 @@ public class UserService implements IUserService {
 
         userRepository.save(newUser);
     }
+
+    @Override
+    public List<UserEmployeeDto> getEmployeeUsers(List<UserDto> users){
+        List<EmployeeDto> employees;
+        try {
+            employees = this.employeeClient.findAllEmployees();
+        } catch (FeignException e) {
+            throw new RequestConflictException("No se ha podido obtener la lista de empleados, intente más tarde");
+        }
+
+        // Crear un mapa de usuarios por CUI para búsqueda rápida
+        Map<String, UserDto> userByCui = users.stream()
+                .collect(Collectors.toMap(UserDto::cui, Function.identity()));
+
+        // Retornar solo los empleados que tengan usuario activo (coincidencia por cui)
+        return employees.stream()
+                .filter(emp -> userByCui.containsKey(emp.cui()))
+                .map(emp -> {
+                    UserDto user = userByCui.get(emp.cui());
+                    return UserEmployeeDto.builder()
+                            .id(user.id())
+                            .active(user.active())
+                            .roleName(user.roleName())
+                            .createdAt(user.createdAt())
+                            .updatedAt(user.updatedAt())
+                            .employeeId(emp.id())
+                            .fullName(emp.fullName())
+                            .cui(emp.cui())
+                            .phone(emp.phone())
+                            .email(user.email())
+                            .isSpecialist(emp.isSpecialist())
+                            .areaName(emp.areaName())
+                            .build();
+                })
+                .toList();
+    }
+
+    @Override
+    public List<UserEmployeeDto> findAllUserByActiveTrue() {
+        List<UserDto> users = this.userRepository.findAllByActiveTrueOrderByCreatedAtDesc(UserDto.class);
+       return this.getEmployeeUsers(users);
+    }
+
+    @Override
+    public List<UserEmployeeDto> findAllUserByActiveFalse() {
+        List<UserDto> users = this.userRepository.findAllByActiveFalseOrderByCreatedAtDesc(UserDto.class);
+        return this.getEmployeeUsers(users);
+    }
+
+    @Override
+    public void updateUserActive(Long userId, boolean active) {
+        UserEntity user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new ValueNotFoundException("El usuario no existe"));
+
+        user.setActive(active);
+
+        userRepository.save(user);
+
+    }
+
+    @Transactional
+    @Override
+    public void updateRole(Long userId, Long roleId) {
+        UserEntity user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new ValueNotFoundException("El usuario no existe"));
+
+        RoleEntity role = this.roleRepository.findById(roleId)
+                .orElseThrow(() -> new ValueNotFoundException("El rol no existe"));
+
+        user.setRole(role);
+
+        userRepository.save(user);
+    }
+
+
+
 }
