@@ -1,6 +1,7 @@
 package org.ehealth.hr.service;
 
 import feign.FeignException;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.hr.client.PatientClient;
 import org.ehealth.hr.domain.dto.ContractDto;
@@ -20,7 +21,6 @@ import org.ehealth.hr.repository.ContractRepository;
 import org.ehealth.hr.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,6 +90,7 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    @Generated
     public ReportAssignedEmployeeDto getReportAssignedEmployeeInRange(Integer filter, String startDate, String endDate) {
         // 1. Obtener todos los empleados del área "Medicos"
         List<EmployeeDto> employees = employeeRepository.findAllByIsSpecialistFalseOrderByCreatedAtDesc(EmployeeDto.class).stream()
