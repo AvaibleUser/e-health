@@ -28,8 +28,13 @@ public class EmployeeController {
     @PermitAll
     @GetMapping(value = "/cui/{cui}")
     public EmployeeDto findEmployeeByCui(@PathVariable String cui) {
-        System.out.println(cui);
         return employeeService.findEmployeeByCui(cui);
+    }
+
+    @PermitAll
+    @GetMapping(value = "/all")
+    public List<EmployeeDto> findAllEmployee() {
+        return employeeService.findAllEmployeesOrdered();
     }
 
     @PostMapping()
