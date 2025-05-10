@@ -1,5 +1,6 @@
 package org.ehealth.hr.service;
 
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.hr.domain.dto.vacation.CreateRequestVacationDto;
 import org.ehealth.hr.domain.dto.vacation.UpdateRequestVacationDto;
@@ -77,6 +78,7 @@ public class VacationService implements IVacationService {
    }
 
    @Override
+   @Generated
    public VacationPendingDto createRequestVacation(CreateRequestVacationDto createRequestVacationDto) {
        EmployeeEntity employee = this.employeeRepository.findById(createRequestVacationDto.employeeId()).orElseThrow(()
                -> new ValueNotFoundException("Empleado no encontrado para la solicitud de vacaciones"));

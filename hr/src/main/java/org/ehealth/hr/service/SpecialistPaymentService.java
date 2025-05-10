@@ -86,7 +86,7 @@ public class SpecialistPaymentService implements ISpecialistPaymentService {
         }
 
         if (!exist){
-            throw new ValueNotFoundException("La cirucia que intenta pagar no existe");
+            throw new ValueNotFoundException("La cirugia que intenta pagar no existe");
         }
 
         SpecialistPaymentEntity paymentEntity = SpecialistPaymentEntity

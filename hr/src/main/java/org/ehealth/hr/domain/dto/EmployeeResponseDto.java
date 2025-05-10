@@ -1,6 +1,7 @@
 package org.ehealth.hr.domain.dto;
 
 import lombok.Builder;
+import lombok.Generated;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
 
 import java.time.Instant;
@@ -15,6 +16,7 @@ public record EmployeeResponseDto(
         boolean isSpecialist,
         Instant createdAt
 ) {
+    @Generated
     public static EmployeeResponseDto fromEntity(EmployeeEntity entity) {
         return EmployeeResponseDto
                 .builder()

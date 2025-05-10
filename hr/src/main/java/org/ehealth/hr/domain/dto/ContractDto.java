@@ -1,6 +1,7 @@
 package org.ehealth.hr.domain.dto;
 
 import lombok.Builder;
+import lombok.Generated;
 import org.ehealth.hr.domain.entity.ContractEntity;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public record ContractDto(
         Instant updatedAt
 ) {
 
+    @Generated
     public static ContractDto fromEntity(ContractEntity entity) {
         return ContractDto
                 .builder()
