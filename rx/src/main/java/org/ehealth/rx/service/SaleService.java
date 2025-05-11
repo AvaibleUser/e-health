@@ -7,6 +7,9 @@ import org.ehealth.rx.client.PatientClient;
 import org.ehealth.rx.domain.dto.CreateSaleDto;
 import org.ehealth.rx.domain.dto.ItemSaleDto;
 import org.ehealth.rx.domain.dto.employee.EmployeeDto;
+import org.ehealth.rx.domain.dto.report.ItemsSaleMedicineDto;
+import org.ehealth.rx.domain.dto.report.ReportSaleMedicineDto;
+import org.ehealth.rx.domain.dto.report.SaleMedicineDto;
 import org.ehealth.rx.domain.entity.MedicineEntity;
 import org.ehealth.rx.domain.entity.SaleEntity;
 import org.ehealth.rx.domain.exception.BadRequestException;
@@ -17,9 +20,11 @@ import org.ehealth.rx.repository.SaleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -120,6 +125,83 @@ public class SaleService implements ISaleService {
 
         // Guardar el nuevo stock actualizado
         medicineRepository.saveAll(medicineMap.values());
+    }
+
+    @Override
+    public List<ReportSaleMedicineDto> getReportSalesMedicinePerMedicine(List<SaleMedicineDto> saleMedicineDtos) {
+
+        // Agrupamos por medicamento
+        Map<Long, List<SaleMedicineDto>> groupedByMedicine = saleMedicineDtos.stream()
+                .collect(Collectors.groupingBy(SaleMedicineDto::medicineId));
+
+        List<ReportSaleMedicineDto> reports = new ArrayList<>();
+
+        for (Map.Entry<Long, List<SaleMedicineDto>> entry : groupedByMedicine.entrySet()) {
+            List<SaleMedicineDto> sales = entry.getValue();
+            SaleMedicineDto anySale = sales.get(0);
+
+            List<ItemsSaleMedicineDto> items = new ArrayList<>();
+            int totalSold = 0;
+            BigDecimal totalIncome = BigDecimal.ZERO;
+            BigDecimal totalCost = BigDecimal.ZERO;
+
+            for (SaleMedicineDto sale : sales) {
+                int quantity = sale.quantity();
+                BigDecimal unitPrice = sale.unitPrice();
+                BigDecimal unitCost = sale.unitCost();
+
+                BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
+                BigDecimal subCost = unitCost.multiply(BigDecimal.valueOf(quantity));
+                BigDecimal profit = subtotal.subtract(subCost);
+
+                totalSold += quantity;
+                totalIncome = totalIncome.add(subtotal);
+                totalCost = totalCost.add(subCost);
+
+                items.add(ItemsSaleMedicineDto.builder()
+                        .saleId(sale.saleId())
+                        .quantity(quantity)
+                        .unitPrice(unitPrice)
+                        .soldAt(sale.soldAt())
+                        .unitCost(unitCost)
+                        .Subtotal(subtotal)
+                        .SubCost(subCost)
+                        .Profit(profit)
+                        .build());
+            }
+
+            BigDecimal totalProfit = totalIncome.subtract(totalCost);
+
+            reports.add(ReportSaleMedicineDto.builder()
+                    .medicineId(anySale.medicineId())
+                    .name(anySale.name())
+                    .totalSold(totalSold)
+                    .totalIncome(totalIncome)
+                    .totalProfit(totalProfit)
+                    .items(items)
+                    .build());
+        }
+
+        return reports;
+    }
+
+    @Override
+    public List<ReportSaleMedicineDto> getReportSalesMedicinePerMedicineInRange(LocalDate startDate, LocalDate endDate) {
+        List<SaleMedicineDto> saleMedicineDtos;
+
+        if (startDate == null || endDate == null) {
+            saleMedicineDtos = this.saleRepository.findAllSalesWithMedicine();
+            return this.getReportSalesMedicinePerMedicine(saleMedicineDtos);
+        }
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atStartOfDay(zoneId).toInstant();
+
+        saleMedicineDtos = this.saleRepository.findSalesWithMedicineBetweenDates(startInstant, endInstant);
+
+        return this.getReportSalesMedicinePerMedicine(saleMedicineDtos);
+
     }
 
 
