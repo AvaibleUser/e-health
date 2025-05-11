@@ -7,9 +7,7 @@ import org.ehealth.rx.client.PatientClient;
 import org.ehealth.rx.domain.dto.CreateSaleDto;
 import org.ehealth.rx.domain.dto.ItemSaleDto;
 import org.ehealth.rx.domain.dto.employee.EmployeeDto;
-import org.ehealth.rx.domain.dto.report.ItemsSaleMedicineDto;
-import org.ehealth.rx.domain.dto.report.ReportSaleMedicineDto;
-import org.ehealth.rx.domain.dto.report.SaleMedicineDto;
+import org.ehealth.rx.domain.dto.report.*;
 import org.ehealth.rx.domain.entity.MedicineEntity;
 import org.ehealth.rx.domain.entity.SaleEntity;
 import org.ehealth.rx.domain.exception.BadRequestException;
@@ -201,8 +199,96 @@ public class SaleService implements ISaleService {
         saleMedicineDtos = this.saleRepository.findSalesWithMedicineBetweenDates(startInstant, endInstant);
 
         return this.getReportSalesMedicinePerMedicine(saleMedicineDtos);
-
     }
 
+    @Override
+    public List<ReportSalesPerEmployeeDto> getReportSalesMedicinePerEmployee(List<SaleMedicineDto> saleMedicineDtos) {
+
+        // Obtener empleados
+        List<EmployeeDto> employees;
+        try {
+            employees = this.employeeClient.findAllEmployees();
+        } catch (FeignException e) {
+            throw new RequestConflictException("No se obtener empleados para el reporte");
+        }
+
+        // Agrupar las ventas por empleado
+        Map<Long, List<SaleMedicineDto>> groupedByEmployee = saleMedicineDtos.stream()
+                .collect(Collectors.groupingBy(SaleMedicineDto::employeeId));
+
+        List<ReportSalesPerEmployeeDto> reportList = new ArrayList<>();
+
+        for (EmployeeDto employee : employees) {
+            Long empId = employee.id();
+            List<SaleMedicineDto> employeeSales = groupedByEmployee.get(empId);
+            if (employeeSales == null || employeeSales.isEmpty()) {
+                continue;
+            }
+
+            List<ItemsSalePerEmployeeDto> items = new ArrayList<>();
+            int totalSold = 0;
+            BigDecimal totalIncome = BigDecimal.ZERO;
+            BigDecimal totalCost = BigDecimal.ZERO;
+
+            for (SaleMedicineDto sale : employeeSales) {
+                int quantity = sale.quantity();
+                BigDecimal unitPrice = sale.unitPrice();
+                BigDecimal unitCost = sale.unitCost();
+
+                BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
+                BigDecimal subCost = unitCost.multiply(BigDecimal.valueOf(quantity));
+                BigDecimal profit = subtotal.subtract(subCost);
+
+                totalSold += quantity;
+                totalIncome = totalIncome.add(subtotal);
+                totalCost = totalCost.add(subCost);
+
+                items.add(ItemsSalePerEmployeeDto.builder()
+                        .saleId(sale.saleId())
+                        .quantity(quantity)
+                        .unitPrice(unitPrice)
+                        .soldAt(sale.soldAt())
+                        .unitCost(unitCost)
+                        .name(sale.name())
+                        .Subtotal(subtotal)
+                        .SubCost(subCost)
+                        .Profit(profit)
+                        .build());
+            }
+
+            BigDecimal totalProfit = totalIncome.subtract(totalCost);
+
+            reportList.add(ReportSalesPerEmployeeDto.builder()
+                    .employeeId(empId)
+                    .employeeName(employee.fullName())
+                    .cui(employee.cui())
+                    .totalSold(totalSold)
+                    .totalIncome(totalIncome)
+                    .totalProfit(totalProfit)
+                    .items(items)
+                    .build());
+        }
+
+        return reportList;
+    }
+
+    @Override
+    public List<ReportSalesPerEmployeeDto> getReportSalesMedicineEmployeeInRange(LocalDate startDate, LocalDate endDate){
+        List<SaleMedicineDto> saleMedicineDtos;
+
+        if (startDate == null || endDate == null) {
+            saleMedicineDtos = this.saleRepository.findAllSalesWithMedicine();
+            return this.getReportSalesMedicinePerEmployee(saleMedicineDtos);
+        }
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atStartOfDay(zoneId).toInstant();
+
+        saleMedicineDtos = this.saleRepository.findSalesWithMedicineBetweenDates(startInstant, endInstant);
+
+        return this.getReportSalesMedicinePerEmployee(saleMedicineDtos);
+
+    }
 
 }

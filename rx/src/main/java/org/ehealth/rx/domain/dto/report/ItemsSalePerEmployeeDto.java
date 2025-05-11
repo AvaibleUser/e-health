@@ -6,17 +6,20 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Builder(toBuilder = true)
-public record SaleMedicineDto(
-        //medicine
-        Long medicineId,
-        String name,
-        BigDecimal unitCost,
-        //sale
+public record ItemsSalePerEmployeeDto(
+        //sales
         Long saleId,
         Integer quantity,
         BigDecimal unitPrice,
         Instant soldAt,
-        //employee
-        Long employeeId
+        //medicine
+        BigDecimal unitCost,
+        String name,
+
+        //calculos
+        BigDecimal Subtotal,
+        BigDecimal SubCost,
+        BigDecimal Profit
 ) {
+
 }

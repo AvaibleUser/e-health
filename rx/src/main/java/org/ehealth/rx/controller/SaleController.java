@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.rx.domain.dto.CreateSaleDto;
 import org.ehealth.rx.domain.dto.report.ReportSaleMedicineDto;
+import org.ehealth.rx.domain.dto.report.ReportSalesPerEmployeeDto;
 import org.ehealth.rx.service.ISaleService;
 import org.ehealth.rx.util.annotation.CurrentUserCui;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,5 +37,13 @@ public class SaleController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ){
         return ResponseEntity.ok(this.saleService.getReportSalesMedicinePerMedicineInRange(startDate, endDate));
+    }
+
+    @GetMapping("/report/employees")
+    public ResponseEntity<List<ReportSalesPerEmployeeDto>> getReportSalesMedicineEmployeeInRange(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ){
+        return ResponseEntity.ok(this.saleService.getReportSalesMedicineEmployeeInRange(startDate, endDate));
     }
 }

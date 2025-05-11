@@ -21,7 +21,8 @@ public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
             s.id,
             s.quantity,
             s.unitPrice,
-            s.soldAt
+            s.soldAt,
+            s.employeeId
         )
         FROM sale s
         JOIN s.medicine m
@@ -37,7 +38,8 @@ public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
         s.id,
         s.quantity,
         s.unitPrice,
-        s.soldAt
+        s.soldAt,
+        s.employeeId
     )
     FROM sale s
     JOIN s.medicine m

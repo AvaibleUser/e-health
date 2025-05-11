@@ -4,6 +4,7 @@ import org.ehealth.rx.domain.dto.CreateSaleDto;
 import org.ehealth.rx.domain.dto.ItemSaleDto;
 import org.ehealth.rx.domain.dto.employee.EmployeeDto;
 import org.ehealth.rx.domain.dto.report.ReportSaleMedicineDto;
+import org.ehealth.rx.domain.dto.report.ReportSalesPerEmployeeDto;
 import org.ehealth.rx.domain.dto.report.SaleMedicineDto;
 import org.ehealth.rx.domain.entity.MedicineEntity;
 import org.ehealth.rx.domain.entity.SaleEntity;
@@ -25,4 +26,6 @@ public interface ISaleService {
     List<SaleEntity> buildSales(Long employeeId, CreateSaleDto dto, Map<Long, MedicineEntity> medicineMap);
     List<ReportSaleMedicineDto> getReportSalesMedicinePerMedicineInRange(LocalDate starDate, LocalDate endDate);
     List<ReportSaleMedicineDto> getReportSalesMedicinePerMedicine(List<SaleMedicineDto> saleMedicineDtos);
+    List<ReportSalesPerEmployeeDto> getReportSalesMedicinePerEmployee(List<SaleMedicineDto> saleMedicineDtos);
+    List<ReportSalesPerEmployeeDto> getReportSalesMedicineEmployeeInRange(LocalDate startDate, LocalDate endDate);
 }
