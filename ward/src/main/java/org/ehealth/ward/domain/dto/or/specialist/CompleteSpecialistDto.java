@@ -1,4 +1,4 @@
-package org.ehealth.ward.domain.dto.ward.employee;
+package org.ehealth.ward.domain.dto.or.specialist;
 
 import org.ehealth.ward.domain.dto.client.employee.EmployeeDto;
 
@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Builder;
 
 @Builder(toBuilder = true)
-public record CompleteEmployeeDto(
+public record CompleteSpecialistDto(
         @JsonUnwrapped @JsonIgnoreProperties( {
                 "id", "createdAt", "updatedAt" }) EmployeeDto employee,
-        @JsonUnwrapped AssignedEmployeeDto assignedEmployee){
+        @JsonUnwrapped SpecialistDto specialist){
 }

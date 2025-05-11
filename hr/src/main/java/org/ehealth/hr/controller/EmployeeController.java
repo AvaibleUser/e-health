@@ -1,5 +1,7 @@
 package org.ehealth.hr.controller;
 
+import java.util.List;
+
 import org.ehealth.hr.domain.dto.CreateEmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
@@ -7,16 +9,16 @@ import org.ehealth.hr.domain.dto.reports.ReportAssignedEmployeeDto;
 import org.ehealth.hr.service.IEmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/employees")
@@ -59,7 +61,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/assignable")
-    public List<EmployeeDto> findAssignableEmployees() {
+    public List<EmployeeDto> findAssignableEmployees(@RequestParam(defaultValue = "false") boolean specialists) {
+        if (specialists) {
+            return employeeService.findAssignableSpecialists();
+        }
         return employeeService.findAssignableEmployees();
     }
 

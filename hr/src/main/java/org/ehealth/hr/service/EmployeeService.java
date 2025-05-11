@@ -95,6 +95,11 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    public List<EmployeeDto> findAssignableSpecialists() {
+        return employeeRepository.findAllByIsSpecialistTrueOrderByCreatedAtDesc(EmployeeDto.class);
+    }
+
+    @Override
     public List<EmployeeDto> findEmployeesByArea(Long areaId) {
         return employeeRepository.findAllByAreaIdOrderByCreatedAtDesc(areaId, EmployeeDto.class);
     }

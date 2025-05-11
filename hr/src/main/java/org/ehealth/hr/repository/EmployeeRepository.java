@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
     boolean existsByEmail(String email);
+
     boolean existsByCui(String cui);
 
     <T> Optional<T> findByCui(String cui, Class<T> type);
@@ -20,13 +21,14 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
 
     <T> List<T> findAllByIsSpecialistTrueOrderByCreatedAtDesc(Class<T> type);
 
-    <T> List<T> findAllByAreaNameInAndIsSpecialistFalseOrderByCreatedAtDesc(List<String> areaNames, Class<T> type);
+    <T> List<T> findAllByAreaNameInAndIsSpecialistOrderByCreatedAtDesc(List<String> areaNames, boolean isSpecialist,
+            Class<T> type);
 
     <T> List<T> findAllByAreaIdOrderByCreatedAtDesc(Long areaId, Class<T> type);
 
     <T> List<T> findAllByIsSpecialistFalseOrderByCreatedAtDesc(Class<T> type);
 
     default <T> List<T> findAvailableEmployeesForAdmissions(Class<T> type) {
-        return findAllByAreaNameInAndIsSpecialistFalseOrderByCreatedAtDesc(List.of("Medicos", "Enfermeria"), type);
+        return findAllByAreaNameInAndIsSpecialistOrderByCreatedAtDesc(List.of("Medicos", "Enfermeria"), false, type);
     }
 }

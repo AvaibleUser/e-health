@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.ehealth.ward.client.EmployeeClient;
-import org.ehealth.ward.domain.dto.client.auth.EmployeeDto;
+import org.ehealth.ward.domain.dto.client.employee.EmployeeDto;
 import org.ehealth.ward.domain.dto.ward.admission.AdmissionDto;
 import org.ehealth.ward.domain.dto.ward.employee.AssignedEmployeeDto;
 import org.ehealth.ward.domain.dto.ward.employee.AssignedEmployeeReportDto;
