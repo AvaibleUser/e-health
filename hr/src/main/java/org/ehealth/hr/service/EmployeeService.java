@@ -161,5 +161,9 @@ public class EmployeeService implements IEmployeeService {
                 .build();
     }
 
+    @Override
+    public boolean existEmployeeById(Long id) {
+        return employeeRepository.existsById(id);
+    }
 
 }

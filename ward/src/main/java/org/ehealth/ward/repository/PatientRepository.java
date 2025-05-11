@@ -1,5 +1,6 @@
 package org.ehealth.ward.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.patient.PatientDto;
@@ -38,4 +39,6 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, J
                 OR p.email LIKE CONCAT('%', :filter, '%')
             """)
     Page<PatientDto> findAllWithSearch(@Param("filter") String filter, Pageable pageable);
+
+    <T> List<T> findAllByOrderByCreatedAtDesc(Class<T> type);
 }

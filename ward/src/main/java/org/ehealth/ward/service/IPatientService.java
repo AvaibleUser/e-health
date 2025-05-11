@@ -1,5 +1,6 @@
 package org.ehealth.ward.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.patient.AddPatientDto;
@@ -17,4 +18,8 @@ public interface IPatientService {
     void addPatient(AddPatientDto patient);
 
     void updatePatient(long id, UpdatePatientDto patient);
+
+    List<PatientDto> findAll();
+
+    boolean existPatientById(Long id);
 }

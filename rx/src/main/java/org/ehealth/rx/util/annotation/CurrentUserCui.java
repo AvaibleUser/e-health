@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @Target({ ElementType.PARAMETER, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@AuthenticationPrincipal(expression = "#this.getTokenAttributes().get('cui')")
+@AuthenticationPrincipal(expression = "#this.getClaimAsString('cui')")
 public @interface CurrentUserCui {
 
 }

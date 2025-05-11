@@ -37,6 +37,12 @@ public class EmployeeController {
         return employeeService.findAllEmployeesOrdered();
     }
 
+    @GetMapping(value = "/exist/{id}")
+    public boolean existEmployeeById(@PathVariable Long id) {
+        return employeeService.existEmployeeById(id);
+    }
+
+
     @PostMapping()
     public ResponseEntity<EmployeeResponseDto> createEmployee(@RequestBody CreateEmployeeDto dto) {
         EmployeeResponseDto response = employeeService.createEmployee(dto);
@@ -74,5 +80,7 @@ public class EmployeeController {
         ReportAssignedEmployeeDto report = employeeService.getReportAssignedEmployeeInRange(filter, startDate, endDate);
         return ResponseEntity.ok(report);
     }
+
+
 
 }

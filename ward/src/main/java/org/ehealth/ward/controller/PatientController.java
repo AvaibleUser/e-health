@@ -3,6 +3,7 @@ package org.ehealth.ward.controller;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
+import jakarta.validation.constraints.Positive;
 import org.ehealth.ward.domain.dto.patient.AddPatientDto;
 import org.ehealth.ward.domain.dto.patient.PatientDto;
 import org.ehealth.ward.domain.dto.patient.UpdatePatientDto;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/patients")
@@ -49,5 +52,16 @@ public class PatientController {
     @ResponseStatus(NO_CONTENT)
     public void updatePatient(@PathVariable long patientId, @RequestBody UpdatePatientDto patient) {
         patientService.updatePatient(patientId, patient);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PatientDto>> getAllPatients() {
+        List<PatientDto> patients = patientService.findAll();
+        return ResponseEntity.ok(patients);
+    }
+
+    @GetMapping("/exist/{id}")
+    public boolean existPatientById(@PathVariable Long id) {
+        return patientService.existPatientById(id);
     }
 }
