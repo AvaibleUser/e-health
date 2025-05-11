@@ -16,4 +16,5 @@ public interface IEmployeeService {
     List<EmployeeDto> findAllEmployeesOrdered();
     List<EmployeeDto> findEmployeesByArea(Long areaId);
     ReportAssignedEmployeeDto getReportAssignedEmployeeInRange(Integer filter, String startDate, String endDate);
+    boolean existEmployeeById(Long id);
 }

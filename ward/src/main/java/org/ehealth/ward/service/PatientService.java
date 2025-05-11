@@ -1,5 +1,6 @@
 package org.ehealth.ward.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,5 +64,15 @@ public class PatientService implements IPatientService {
         newPatient.email().ifPresentOrElse(patientEntity::setEmail, () -> patientEntity.setEmail(null));
 
         patientRepository.save(patientEntity);
+    }
+
+    @Override
+    public List<PatientDto> findAll(){
+        return this.patientRepository.findAllByOrderByCreatedAtDesc(PatientDto.class);
+    }
+
+    @Override
+    public boolean existPatientById(Long id){
+        return patientRepository.existsById(id);
     }
 }

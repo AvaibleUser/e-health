@@ -16,7 +16,7 @@ public interface PatientClient {
     @GetMapping(value = "/v1/surgeries/payments")
     List<SurgeryPaymentDto> getSurgeryPayments();
 
-    @GetMapping(value = "/v1/exist/{specialistId}")
+    @GetMapping(value = "/v1/surgeries/exist/{specialistId}")
     boolean existSurge(@PathVariable("specialistId") Long specialistId);
 
     @GetMapping(value = "/v1/assigned-employees/report/doctors")

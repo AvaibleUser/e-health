@@ -44,7 +44,7 @@ public class PurchacheEntity {
 
     @NonNull
     @Column(nullable = false)
-    private BigDecimal price;
+    private BigDecimal unitCost;
 
     @NonNull
     @ManyToOne(optional = false)
