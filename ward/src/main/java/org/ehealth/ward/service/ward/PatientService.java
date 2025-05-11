@@ -1,4 +1,4 @@
-package org.ehealth.ward.service;
+package org.ehealth.ward.service.ward;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +10,7 @@ import org.ehealth.ward.domain.dto.patient.UpdatePatientDto;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.exception.RequestConflictException;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;
-import org.ehealth.ward.repository.PatientRepository;
+import org.ehealth.ward.repository.ward.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

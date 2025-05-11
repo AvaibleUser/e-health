@@ -1,13 +1,12 @@
-package org.ehealth.ward.controller;
+package org.ehealth.ward.controller.ward;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-import jakarta.validation.constraints.Positive;
 import org.ehealth.ward.domain.dto.patient.AddPatientDto;
 import org.ehealth.ward.domain.dto.patient.PatientDto;
 import org.ehealth.ward.domain.dto.patient.UpdatePatientDto;
-import org.ehealth.ward.service.IPatientService;
+import org.ehealth.ward.service.ward.IPatientService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

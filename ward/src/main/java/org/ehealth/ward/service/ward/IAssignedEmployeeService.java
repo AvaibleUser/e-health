@@ -1,4 +1,4 @@
-package org.ehealth.ward.service;
+package org.ehealth.ward.service.ward;
 
 import org.ehealth.ward.domain.dto.ward.AssignedEmployeeReportDto;
 

@@ -1,9 +1,9 @@
-package org.ehealth.ward.controller;
+package org.ehealth.ward.controller.ward;
 
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.ward.domain.dto.ward.AssignedEmployeeReportDto;
-import org.ehealth.ward.service.IAssignedEmployeeService;
+import org.ehealth.ward.service.ward.IAssignedEmployeeService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

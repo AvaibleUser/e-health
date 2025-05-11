@@ -1,4 +1,4 @@
-package org.ehealth.ward.service;
+package org.ehealth.ward.service.ward;
 
 import java.util.List;
 import java.util.Optional;

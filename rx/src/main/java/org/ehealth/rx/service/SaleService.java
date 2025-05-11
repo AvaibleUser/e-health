@@ -291,4 +291,41 @@ public class SaleService implements ISaleService {
 
     }
 
+    @Override
+    public ReportSalesTotal getReportSalesTotal(List<SaleMedicineDto> saleMedicineDtos) {
+        if (saleMedicineDtos == null || saleMedicineDtos.isEmpty()) {
+            return ReportSalesTotal.builder()
+                    .totalIncome(BigDecimal.ZERO)
+                    .items(Collections.emptyList())
+                    .build();
+        }
+
+        BigDecimal totalIncome = saleMedicineDtos.stream()
+                .map(item -> item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return ReportSalesTotal.builder()
+                .totalIncome(totalIncome)
+                .items(saleMedicineDtos)
+                .build();
+    }
+
+    @Override
+    public ReportSalesTotal getReportSalesTotalInRange(LocalDate startDate, LocalDate endDate){
+        List<SaleMedicineDto> saleMedicineDtos;
+
+        if (startDate == null || endDate == null) {
+            saleMedicineDtos = this.saleRepository.findAllSalesWithMedicine();
+            return this.getReportSalesTotal(saleMedicineDtos);
+        }
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atStartOfDay(zoneId).toInstant();
+
+        saleMedicineDtos = this.saleRepository.findSalesWithMedicineBetweenDates(startInstant, endInstant);
+
+        return this.getReportSalesTotal(saleMedicineDtos);
+    }
+
 }

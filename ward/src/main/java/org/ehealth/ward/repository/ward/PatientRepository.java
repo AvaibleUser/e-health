@@ -1,4 +1,4 @@
-package org.ehealth.ward.repository;
+package org.ehealth.ward.repository.ward;
 
 import java.util.List;
 import java.util.Optional;

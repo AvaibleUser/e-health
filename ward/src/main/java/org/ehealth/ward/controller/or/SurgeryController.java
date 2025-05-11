@@ -1,9 +1,9 @@
-package org.ehealth.ward.controller;
+package org.ehealth.ward.controller.or;
 
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.ward.domain.dto.or.SurgeryPaymentDto;
-import org.ehealth.ward.service.ISurgeryService;
+import org.ehealth.ward.service.or.ISurgeryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

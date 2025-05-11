@@ -1,8 +1,8 @@
-package org.ehealth.ward.service;
+package org.ehealth.ward.service.ward;
 
 import lombok.RequiredArgsConstructor;
 import org.ehealth.ward.domain.dto.ward.AssignedEmployeeReportDto;
-import org.ehealth.ward.repository.AssignedEmployeeRepository;
+import org.ehealth.ward.repository.ward.AssignedEmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
