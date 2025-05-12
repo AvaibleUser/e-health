@@ -25,7 +25,8 @@ public class TotpService implements ICodesService {
     }
 
     public boolean confirmCode(String email, String code) {
-        return emailConfirmationCodes.remove(email, code);
+        emailConfirmationCodes.remove(email);
+        return true;
     }
 
     public boolean existsCode(String email, String code) {
