@@ -3,6 +3,7 @@ dockerize=''
 show=''
 verbose=''
 project=''
+watch=''
 
 execute_build() {
   command=()
@@ -40,6 +41,12 @@ execute_build() {
     else
       printf "Levantando contenedores\n"
       docker compose up -d
+      printf "Iniciando watch\n"
+      if [ "${watch}" == 'true' ]; then
+        docker compose watch
+      else
+        docker compose watch --no-up &
+      fi
     fi
   fi
 }
@@ -50,17 +57,19 @@ execute_error() {
           -d para levantar los contenedores
           -s para mostrar el listado de proyectos agregados
           -v para mostrar información de compilación
+          -w para ver los logs de docker compose
           -p para indicar el proyecto a limpiar"
   exit 1
 }
 
-while getopts 'cdvsp:' flag; do
+while getopts 'cdvswp:' flag; do
   case "${flag}" in
     c) clean='true' ;;
     d) dockerize='true' ;;
     s) show='true' ;;
     v) verbose='true' ;;
     p) project="${OPTARG}" ;;
+    w) watch='true' ;;
     *) execute_error ;;
   esac
 done

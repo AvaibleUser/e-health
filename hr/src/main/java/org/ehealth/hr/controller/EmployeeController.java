@@ -1,5 +1,7 @@
 package org.ehealth.hr.controller;
 
+import java.util.List;
+
 import org.ehealth.hr.domain.dto.CreateEmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
@@ -7,16 +9,16 @@ import org.ehealth.hr.domain.dto.reports.ReportAssignedEmployeeDto;
 import org.ehealth.hr.service.IEmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/employees")
@@ -50,9 +52,20 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> findAllEmployees() {
-        List<EmployeeDto> employees = employeeService.findAllEmployeesOrdered();
+    public ResponseEntity<List<EmployeeDto>> findAllEmployees(@RequestParam(required = false) List<Long> byIds) {
+        List<EmployeeDto> employees = byIds == null
+                ? employeeService.findAllEmployeesOrdered()
+                : employeeService.findEmployeesByIds(byIds);
+
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/assignable")
+    public List<EmployeeDto> findAssignableEmployees(@RequestParam(defaultValue = "false") boolean specialists) {
+        if (specialists) {
+            return employeeService.findAssignableSpecialists();
+        }
+        return employeeService.findAssignableEmployees();
     }
 
     @GetMapping("/area/{areaId}")
@@ -75,8 +88,7 @@ public class EmployeeController {
     public ResponseEntity<ReportAssignedEmployeeDto> getAssignedReport(
             @PathVariable Integer filter,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate
-    ) {
+            @RequestParam(required = false) String endDate) {
         ReportAssignedEmployeeDto report = employeeService.getReportAssignedEmployeeInRange(filter, startDate, endDate);
         return ResponseEntity.ok(report);
     }

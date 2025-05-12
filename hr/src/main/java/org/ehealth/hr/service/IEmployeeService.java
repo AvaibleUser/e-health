@@ -14,7 +14,10 @@ public interface IEmployeeService {
     EmployeeResponseDto createEmployee(CreateEmployeeDto dto);
     EmployeeDto findEmployeeByCui(String cui);
     List<EmployeeDto> findAllEmployeesOrdered();
+    List<EmployeeDto> findEmployeesByIds(List<Long> byIds);
     List<EmployeeDto> findEmployeesByArea(Long areaId);
+    List<EmployeeDto> findAssignableSpecialists();
+    List<EmployeeDto> findAssignableEmployees();
     ReportAssignedEmployeeDto getReportAssignedEmployeeInRange(Integer filter, String startDate, String endDate);
     boolean existEmployeeById(Long id);
 }
