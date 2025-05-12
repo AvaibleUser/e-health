@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ehealth.ward.domain.dto.patient.AddPatientDto;
-import org.ehealth.ward.domain.dto.patient.PatientDto;
-import org.ehealth.ward.domain.dto.patient.UpdatePatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.AddPatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.PatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.UpdatePatientDto;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.exception.RequestConflictException;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;

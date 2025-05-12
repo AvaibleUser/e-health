@@ -1,4 +1,4 @@
-package org.ehealth.ward.domain.dto.or;
+package org.ehealth.ward.domain.dto.or.surgery;
 
 import lombok.Builder;
 

@@ -60,7 +60,7 @@ public class SurgeryEntity {
     private TariffEntity tariff;
 
     @OneToMany(mappedBy = "surgery")
-    private Set<SurgerySpecialist> specialists;
+    private Set<SurgerySpecialistEntity> specialists;
 
     @OneToMany(mappedBy = "surgery")
     private Set<BillItemEntity> billItems;

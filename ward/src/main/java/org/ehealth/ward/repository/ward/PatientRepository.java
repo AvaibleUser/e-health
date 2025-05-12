@@ -3,7 +3,7 @@ package org.ehealth.ward.repository.ward;
 import java.util.List;
 import java.util.Optional;
 
-import org.ehealth.ward.domain.dto.patient.PatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.PatientDto;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>, J
     <T> Page<T> findAllPageableBy(Pageable pageable, Class<T> type);
 
     @Query("""
-            SELECT new org.ehealth.ward.domain.dto.patient.PatientDto(
+            SELECT new org.ehealth.ward.domain.dto.ward.patient.PatientDto(
                 p.id,
                 p.fullName,
                 p.cui,

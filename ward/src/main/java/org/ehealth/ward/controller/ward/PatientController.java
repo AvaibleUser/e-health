@@ -3,9 +3,9 @@ package org.ehealth.ward.controller.ward;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-import org.ehealth.ward.domain.dto.patient.AddPatientDto;
-import org.ehealth.ward.domain.dto.patient.PatientDto;
-import org.ehealth.ward.domain.dto.patient.UpdatePatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.AddPatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.PatientDto;
+import org.ehealth.ward.domain.dto.ward.patient.UpdatePatientDto;
 import org.ehealth.ward.service.ward.IPatientService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
