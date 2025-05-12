@@ -1,5 +1,9 @@
 package org.ehealth.ward.service.or;
 
+import lombok.RequiredArgsConstructor;
+import org.ehealth.ward.repository.or.SurgeryRepository;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,13 +16,10 @@ import org.ehealth.ward.domain.entity.or.SurgeryEntity;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;
 import org.ehealth.ward.repository.finance.TariffRepository;
-import org.ehealth.ward.repository.or.SurgeryRepository;
 import org.ehealth.ward.repository.ward.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

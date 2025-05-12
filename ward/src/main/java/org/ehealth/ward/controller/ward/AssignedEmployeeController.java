@@ -1,5 +1,6 @@
 package org.ehealth.ward.controller.ward;
 
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/v1/assigned-employees")

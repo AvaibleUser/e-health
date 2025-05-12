@@ -1,10 +1,10 @@
 package org.ehealth.ward.repository.or;
 
+import org.ehealth.ward.domain.entity.or.SurgeryEntity;
 import java.util.List;
 import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.or.surgery.SurgeryPaymentDto;
-import org.ehealth.ward.domain.entity.or.SurgeryEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

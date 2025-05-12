@@ -23,4 +23,5 @@ public interface ISurgeryService {
     List<SurgeryPaymentDto> getSurgeryPaymentDto();
 
     boolean existSurgeryPayment(Long specialistId);
+
 }
