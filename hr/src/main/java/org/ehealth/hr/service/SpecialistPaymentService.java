@@ -7,6 +7,8 @@ import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.or.PaymentPerSurgeryDto;
 import org.ehealth.hr.domain.dto.or.SpecialistPaymentDto;
 import org.ehealth.hr.domain.dto.or.SurgeryPaymentDto;
+import org.ehealth.hr.domain.dto.reports.PaymentEmployeeDto;
+import org.ehealth.hr.domain.dto.reports.ReportExpensePayEmployeeDto;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
 import org.ehealth.hr.domain.entity.SpecialistPaymentEntity;
 import org.ehealth.hr.domain.exception.RequestConflictException;
@@ -16,7 +18,12 @@ import org.ehealth.hr.repository.SpecialistPaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,5 +106,43 @@ public class SpecialistPaymentService implements ISpecialistPaymentService {
         this.specialistPaymentRepository.save(paymentEntity);
     }
 
+    @Override
+    public ReportExpensePayEmployeeDto getReportPayEmployee(List<PaymentEmployeeDto> items){
+        if (items == null || items.isEmpty()) {
+            return ReportExpensePayEmployeeDto.builder()
+                    .totalAmount(BigDecimal.ZERO)
+                    .items(Collections.emptyList())
+                    .build();
+        }
+
+        BigDecimal totalIncome = items.stream()
+                .map(PaymentEmployeeDto::amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return ReportExpensePayEmployeeDto.builder()
+                .totalAmount(totalIncome)
+                .items(items)
+                .build();
+
+    }
+
+    @Override
+    public ReportExpensePayEmployeeDto getReportPayEmployeeInRange(LocalDate startDate, LocalDate endDate) {
+        List<PaymentEmployeeDto> items;
+
+        if (startDate == null || endDate == null) {
+            items = this.specialistPaymentRepository.findAllPaymentsProjected();
+            return this.getReportPayEmployee(items);
+        }
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant startInstant = startDate.atStartOfDay(zoneId).toInstant();
+        Instant endInstant = endDate.atStartOfDay(zoneId).toInstant();
+
+        items = specialistPaymentRepository.findAllPaymentsInRange(startInstant,endInstant);
+
+        return this.getReportPayEmployee(items);
+
+    }
 
 }
