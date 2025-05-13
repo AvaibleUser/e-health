@@ -10,6 +10,9 @@ import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;
 import org.ehealth.ward.repository.finance.BillRepository;
 import org.ehealth.ward.repository.ward.PatientRepository;
+import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +26,13 @@ public class BillService implements IBillService {
     private final PatientRepository patientRepository;
 
     @Override
-    public List<BillDto> findPatientBills(long patientId) {
-        return billRepository.findByPatientId(patientId, BillDto.class);
+    public Page<BillDto> findPatientBills(long patientId, Pageable pageable) {
+        return billRepository.findAllByPatientId(patientId, pageable, BillDto.class);
+    }
+
+    @Override
+    public List<BillDto> findOpenPatientBills(long patientId) {
+        return billRepository.findAllByPatientIdAndIsClosedFalse(patientId, BillDto.class);
     }
 
     @Override
@@ -64,6 +72,14 @@ public class BillService implements IBillService {
 
         bill.isClosed().ifPresent(dbBill::setClosed);
         bill.isPaid().ifPresent(dbBill::setPaid);
+
+        if (dbBill.isClosed()) {
+            Hibernate.initialize(dbBill.getBillItems());
+            if (dbBill.getBillItems().isEmpty()) {
+                billRepository.delete(dbBill);
+                return;
+            }
+        }
 
         billRepository.save(dbBill);
     }

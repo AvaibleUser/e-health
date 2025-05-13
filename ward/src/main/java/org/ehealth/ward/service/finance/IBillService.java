@@ -5,10 +5,14 @@ import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.finance.bill.BillDto;
 import org.ehealth.ward.domain.dto.finance.bill.UpdateBillDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IBillService {
 
-    List<BillDto> findPatientBills(long patientId);
+    Page<BillDto> findPatientBills(long patientId, Pageable pageable);
+
+    List<BillDto> findOpenPatientBills(long patientId);
 
     Optional<BillDto> findPatientBillById(long patientId, long billId);
 

@@ -13,7 +13,6 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.ehealth.ward.domain.dto.finance.billitem.AddBillItemDto;
 import org.ehealth.ward.domain.dto.finance.billitem.BillItemDto;
@@ -78,19 +77,21 @@ public class BillItemService implements IBillItemService {
         PatientEntity patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ValueNotFoundException("No se encontro el paciente"));
 
-        BillEntity newBill = BillEntity.builder()
+        BillEntity dbBill = BillEntity.builder()
                 .patient(patient)
                 .isClosed(true)
                 .isPaid(true)
                 .build();
 
-        newBill.setBillItems(Set.of(BillItemEntity.builder()
+        billRepository.save(dbBill);
+
+        BillItemEntity item = BillItemEntity.builder()
                 .concept(billItem.concept())
                 .amount(billItem.amount())
-                .bill(newBill)
-                .build()));
+                .bill(dbBill)
+                .build();
 
-        billRepository.save(newBill);
+        billItemRepository.save(item);
     }
 
     @Override
