@@ -1,5 +1,7 @@
 package org.ehealth.ward.domain.entity.finance;
 
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -54,16 +56,16 @@ public class BillItemEntity {
 
     private Long saleId;
 
-    @ManyToOne
+    @ManyToOne(cascade = PERSIST)
     @JoinColumn(name = "admission_id")
     private AdmissionEntity admission;
 
-    @ManyToOne
+    @ManyToOne(cascade = PERSIST)
     @JoinColumn(name = "surgery_id")
     private SurgeryEntity surgery;
 
     @NonNull
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = MERGE)
     @JoinColumn(name = "bill_id")
     private BillEntity bill;
 

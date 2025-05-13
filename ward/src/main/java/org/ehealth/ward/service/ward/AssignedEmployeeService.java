@@ -1,8 +1,5 @@
 package org.ehealth.ward.service.ward;
 
-import lombok.RequiredArgsConstructor;
-import org.ehealth.ward.repository.ward.AssignedEmployeeRepository;
-import org.springframework.stereotype.Service;
 import static org.ehealth.ward.domain.entity.ward.AssignedEmployeeEntity.AssignedEmployeeType.DOCTOR;
 import static org.ehealth.ward.domain.entity.ward.AssignedEmployeeEntity.AssignedEmployeeType.NURSE;
 

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -49,14 +50,14 @@ public class PatientAdmissionController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public void registerAdmission(@PathVariable long patientId, @RequestBody AddAdmissionDto admission) {
+    public void registerAdmission(@PathVariable long patientId, @RequestBody @Valid AddAdmissionDto admission) {
         admissionService.addAdmission(patientId, admission);
     }
 
     @PutMapping("/{admissionId}")
     @ResponseStatus(NO_CONTENT)
     public void updateAdmission(@PathVariable long admissionId, @PathVariable long patientId,
-            @RequestBody UpdateAdmissionDto admission) {
+            @RequestBody @Valid UpdateAdmissionDto admission) {
         admissionService.updateAdmission(admissionId, patientId, admission);
     }
 }
