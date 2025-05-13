@@ -1,6 +1,7 @@
 package org.ehealth.rx.service;
 
 import feign.FeignException;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.rx.client.EmployeeClient;
 import org.ehealth.rx.client.PatientClient;
@@ -311,6 +312,7 @@ public class SaleService implements ISaleService {
     }
 
     @Override
+    @Generated
     public ReportSalesTotal getReportSalesTotalInRange(LocalDate startDate, LocalDate endDate){
         List<SaleMedicineDto> saleMedicineDtos;
 

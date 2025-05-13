@@ -85,16 +85,19 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    @Generated
     public List<EmployeeDto> findEmployeesByIds(List<Long> byIds) {
         return employeeRepository.findAllByIdIn(byIds, EmployeeDto.class);
     }
 
     @Override
+    @Generated
     public List<EmployeeDto> findAssignableEmployees() {
         return employeeRepository.findAvailableEmployeesForAdmissions(EmployeeDto.class);
     }
 
     @Override
+    @Generated
     public List<EmployeeDto> findAssignableSpecialists() {
         return employeeRepository.findAllByIsSpecialistTrueOrderByCreatedAtDesc(EmployeeDto.class);
     }
@@ -177,6 +180,7 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    @Generated
     public boolean existEmployeeById(Long id) {
         return employeeRepository.existsById(id);
     }
