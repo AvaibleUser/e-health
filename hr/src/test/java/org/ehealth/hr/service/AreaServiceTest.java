@@ -311,7 +311,4 @@ class AreaServiceTest {
         return new UpdateAreaDto(newName);
     }
 
-
-
-
 }

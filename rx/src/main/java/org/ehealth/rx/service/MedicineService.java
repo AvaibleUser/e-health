@@ -61,6 +61,7 @@ public class MedicineService implements IMedicineService {
     }
 
     @Transactional
+    @Override
     public void update(Long id, CreateMedicineDto createMedicineDto) {
         MedicineEntity medicine = medicineRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("La medicina no existe"));
