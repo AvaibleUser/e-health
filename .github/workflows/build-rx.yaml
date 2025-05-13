@@ -1,0 +1,21 @@
+name: Build rx service
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - "build.gradle.kts"
+      - "rx/**" 
+      - ".github/workflows/build-rx.yaml"
+      - ".github/workflows/build.yaml"
+      - "ci.Dockerfile"
+
+jobs:
+  build:
+    name: Build Jar and Dockerize
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
+    with:
+      service: rx
