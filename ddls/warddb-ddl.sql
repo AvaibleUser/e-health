@@ -17,8 +17,8 @@ CREATE TABLE ward.patient
 CREATE TABLE ward.room
 (
     id BIGSERIAL PRIMARY KEY,
-    room_number VARCHAR(255) NOT NULL UNIQUE,
-    cost_per_day NUMERIC(10, 2) NOT NULL,
+    number VARCHAR(255) NOT NULL UNIQUE,
+    cost_per_day NUMERIC(10, 2),
     is_occupied BOOLEAN NOT NULL DEFAULT FALSE,
     under_maintenance BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -35,7 +35,7 @@ CREATE TABLE ward.admission
     id BIGSERIAL PRIMARY KEY,
     admission_date DATE NOT NULL,
     discharge_date DATE,
-    status ward.admission_status_enum NOT NULL DEFAULT 'ADMITTED',
+    status VARCHAR(255) NOT NULL DEFAULT 'ADMITTED',
     patient_id BIGINT NOT NULL REFERENCES ward.patient (id),
     room_id BIGINT NOT NULL REFERENCES ward.room (id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -52,7 +52,7 @@ CREATE TABLE ward.assigned_employee
 (
     id BIGSERIAL PRIMARY KEY,
     employee_id BIGINT NOT NULL,
-    type ward.assigned_employee_type_enum NOT NULL DEFAULT 'DOCTOR',
+    type VARCHAR(255) NOT NULL DEFAULT 'DOCTOR',
     admission_id BIGINT NOT NULL REFERENCES ward.admission (id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
@@ -101,6 +101,8 @@ CREATE TABLE finance.bill
     id BIGSERIAL PRIMARY KEY,
     patient_id BIGINT NOT NULL REFERENCES ward.patient (id),
     total NUMERIC(10, 2),
+    is_closed BOOLEAN NOT NULL DEFAULT FALSE,
+    is_paid BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -108,7 +110,8 @@ CREATE TABLE finance.bill
 CREATE TYPE finance.bill_item_type_enum AS ENUM (
     'HOSPITALIZED',
     'SURGERY',
-    'CONSULTATION'
+    'CONSULTATION',
+    'MEDICATION'
 );
 
 CREATE TABLE finance.bill_item
@@ -117,8 +120,9 @@ CREATE TABLE finance.bill_item
     concept VARCHAR(255) NOT NULL,
     amount NUMERIC(10, 2),
     type finance.bill_item_type_enum NOT NULL DEFAULT 'CONSULTATION',
-    admission_id BIGINT NOT NULL REFERENCES ward.admission (id),
-    surgery_id BIGINT NOT NULL REFERENCES operating_room.surgery (id),
+    sale_id NULL BIGINT,
+    admission_id BIGINT NULL REFERENCES ward.admission (id),
+    surgery_id BIGINT NULL REFERENCES operating_room.surgery (id),
     bill_id BIGINT NOT NULL REFERENCES finance.bill (id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP

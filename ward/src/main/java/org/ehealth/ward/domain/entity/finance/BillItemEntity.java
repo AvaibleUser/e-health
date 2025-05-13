@@ -1,5 +1,7 @@
 package org.ehealth.ward.domain.entity.finance;
 
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -52,18 +54,18 @@ public class BillItemEntity {
     @Enumerated(EnumType.STRING)
     private BillItemType type = BillItemType.CONSULTATION;
 
-    @NonNull
-    @ManyToOne(optional = false)
+    private Long saleId;
+
+    @ManyToOne(cascade = PERSIST)
     @JoinColumn(name = "admission_id")
     private AdmissionEntity admission;
 
-    @NonNull
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = PERSIST)
     @JoinColumn(name = "surgery_id")
     private SurgeryEntity surgery;
 
     @NonNull
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = MERGE)
     @JoinColumn(name = "bill_id")
     private BillEntity bill;
 
@@ -76,6 +78,7 @@ public class BillItemEntity {
     public static enum BillItemType {
         HOSPITALIZED,
         SURGERY,
-        CONSULTATION
+        CONSULTATION,
+        MEDICATION,
     }
 }

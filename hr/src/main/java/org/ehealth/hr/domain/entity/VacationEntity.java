@@ -6,16 +6,10 @@ import static lombok.AccessLevel.PRIVATE;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,7 +46,10 @@ public class VacationEntity {
 
     private boolean approved;
 
-    private boolean finalized;
+    @NonNull
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     @NonNull
     @ManyToOne(optional = false)
@@ -64,4 +61,10 @@ public class VacationEntity {
 
     @UpdateTimestamp
     private Instant updatedAt;
+
+    public static enum State {
+        PENDIENTE,
+        RECHAZADA,
+        APROVADA,
+    }
 }

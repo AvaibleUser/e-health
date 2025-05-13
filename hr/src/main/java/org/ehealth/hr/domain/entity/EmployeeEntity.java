@@ -49,6 +49,8 @@ public class EmployeeEntity {
 
     private String phone;
 
+    @NonNull
+    @Column(nullable = false, unique = true)
     private String email;
 
     private boolean isSpecialist;

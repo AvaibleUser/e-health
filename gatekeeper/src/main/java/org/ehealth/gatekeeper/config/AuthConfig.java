@@ -1,8 +1,5 @@
 package org.ehealth.gatekeeper.config;
 
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.PATCH;
-import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import java.util.List;
@@ -28,9 +25,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -45,7 +39,7 @@ public class AuthConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtDecoder jwtDecoder) throws Exception {
         return httpSecurity
-                .cors(c -> c.configurationSource(corsConfigurationSource()))
+                .cors(c -> c.disable())
                 .csrf(c -> c.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(a -> a
@@ -58,17 +52,6 @@ public class AuthConfig {
                                 .decoder(jwtDecoder)
                                 .jwtAuthenticationConverter(this::convertJwtToAuthentication)))
                 .build();
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
-        config.addAllowedMethod(PUT);
-        config.addAllowedMethod(PATCH);
-        config.addAllowedMethod(DELETE);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
     }
 
     @Bean

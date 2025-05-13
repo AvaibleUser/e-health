@@ -4,6 +4,7 @@ CREATE TABLE rx.medicine (
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   unit_price NUMERIC(10, 2) NOT NULL,
+  unit_cost NUMERIC(10, 2) NOT NULL,
   stock INTEGER DEFAULT 0,
   min_stock INTEGER DEFAULT 10,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -13,7 +14,7 @@ CREATE TABLE rx.medicine (
 CREATE TABLE rx.purchase (
   id BIGSERIAL PRIMARY KEY,
   quantity INTEGER NOT NULL,
-  price NUMERIC(10, 2) NOT NULL,
+  unit_cost NUMERIC(10, 2) NOT NULL,
   medicine_id BIGINT NOT NULL REFERENCES rx.medicine (id),
   purchased_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP

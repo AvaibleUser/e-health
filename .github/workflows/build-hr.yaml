@@ -1,0 +1,21 @@
+name: Build hr service
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - "build.gradle.kts"
+      - "hr/**"
+      - ".github/workflows/build-hr.yaml"
+      - ".github/workflows/build.yaml"
+      - "ci.Dockerfile"
+
+jobs:
+  build:
+    name: Build Jar and Dockerize
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
+    with:
+      service: hr

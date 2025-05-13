@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor(access = PRIVATE)
-public class SurgerySpecialist {
+public class SurgerySpecialistEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

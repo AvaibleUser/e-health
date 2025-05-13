@@ -48,3 +48,6 @@ security:
 client:
   services:
     auth: ${GATEKEEPER_URL:http://gatekeeper:8001}
+    employee: ${HR_URL:http://hr:8002}
+    patient: ${WARD_URL:http://ward:8003}
+

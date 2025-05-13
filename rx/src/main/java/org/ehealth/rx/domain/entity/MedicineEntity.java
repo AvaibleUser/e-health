@@ -46,7 +46,12 @@ public class MedicineEntity {
     @Column(nullable = false)
     private BigDecimal unitPrice;
 
-    private int stock;
+    @NonNull
+    @Column(nullable = false)
+    private BigDecimal unitCost;
+
+    @Builder.Default
+    private int stock = 0;
 
     @Builder.Default
     private int minStock = 10;
