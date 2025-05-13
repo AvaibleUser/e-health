@@ -1,5 +1,6 @@
 package org.ehealth.ward.domain.entity.finance;
 
+import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -25,6 +26,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Singular;
 
 @Entity(name = "bill")
 @Table(name = "bill", schema = "finance")
@@ -51,7 +53,7 @@ public class BillEntity {
 
     private boolean isPaid;
 
-    @OneToMany(mappedBy = "bill")
+    @OneToMany(mappedBy = "bill", cascade = PERSIST)
     private Set<BillItemEntity> billItems;
 
     @CreationTimestamp

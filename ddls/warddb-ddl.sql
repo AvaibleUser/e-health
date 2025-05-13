@@ -120,7 +120,7 @@ CREATE TABLE finance.bill_item
     concept VARCHAR(255) NOT NULL,
     amount NUMERIC(10, 2),
     type finance.bill_item_type_enum NOT NULL DEFAULT 'CONSULTATION',
-    sale_id BIGINT,
+    sale_id NULL BIGINT,
     admission_id BIGINT NULL REFERENCES ward.admission (id),
     surgery_id BIGINT NULL REFERENCES operating_room.surgery (id),
     bill_id BIGINT NOT NULL REFERENCES finance.bill (id),
