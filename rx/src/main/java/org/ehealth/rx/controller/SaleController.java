@@ -1,6 +1,7 @@
 package org.ehealth.rx.controller;
 
 import jakarta.validation.Valid;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.rx.domain.dto.CreateSaleDto;
 import org.ehealth.rx.domain.dto.report.ReportSaleMedicineDto;
@@ -24,6 +25,7 @@ public class SaleController {
     private final ISaleService saleService;
 
     @PostMapping()
+    @Generated
     public ResponseEntity<Void> createSaleTotal(
             @CurrentUserCui String cui,
             @Valid @RequestBody CreateSaleDto createSaleDto

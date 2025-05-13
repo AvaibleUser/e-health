@@ -6,6 +6,8 @@ import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.or.PaymentPerSurgeryDto;
 import org.ehealth.hr.domain.dto.or.SpecialistPaymentDto;
 import org.ehealth.hr.domain.dto.or.SurgeryPaymentDto;
+import org.ehealth.hr.domain.dto.reports.PaymentEmployeeDto;
+import org.ehealth.hr.domain.dto.reports.ReportExpensePayEmployeeDto;
 import org.ehealth.hr.domain.entity.AreaEntity;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
 import org.ehealth.hr.domain.entity.SpecialistPaymentEntity;
@@ -21,7 +23,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +35,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 
@@ -52,6 +57,15 @@ class SpecialistPaymentServiceTest {
     private static final PaymentPerSurgeryDto VALID_PAYMENT_DTO = buildPaymentPerSurgeryDto();
     private static final EmployeeEntity VALID_EMPLOYEE_ENTITY = buildValidEmployeeEntity();
     private static final SpecialistPaymentEntity SAVED_PAYMENT_ENTITY = buildSavedPaymentEntity();
+
+    private static final BigDecimal VALID_AMOUNT = new BigDecimal("1500.00");
+    private static final Instant VALID_PAID_AT = Instant.now();
+
+    private static final LocalDate VALID_START_DATE = LocalDate.now().minusDays(30);
+    private static final LocalDate VALID_END_DATE = LocalDate.now();
+    private static final LocalDate INVALID_START_DATE = LocalDate.now().plusDays(1);
+    private static final Instant VALID_START_INSTANT = VALID_START_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant();
+    private static final Instant VALID_END_INSTANT = VALID_END_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
 
     @Mock
@@ -259,7 +273,227 @@ class SpecialistPaymentServiceTest {
                 .hasMessageContaining("La cirugia que intenta pagar no existe");
     }
 
+    /**
+     * tests function getReportPayEmployee
+     */
+    @Test
+    void shouldReturnEmptyReportWhenInputListIsNull() {
+        // given
+        List<PaymentEmployeeDto> nullItems = null;
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployee(nullItems);
+
+        // then
+        assertThat(result.totalAmount()).isEqualTo(BigDecimal.ZERO);
+        assertThat(result.items()).isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyReportWhenInputListIsEmpty() {
+        // given
+        List<PaymentEmployeeDto> emptyItems = Collections.emptyList();
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployee(emptyItems);
+
+        // then
+        assertThat(result.totalAmount()).isEqualTo(BigDecimal.ZERO);
+        assertThat(result.items()).isEmpty();
+    }
+
+    @Test
+    void shouldCalculateCorrectTotalAmountForSingleItem() {
+        // given
+        PaymentEmployeeDto singleItem = buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME,
+                VALID_CUI, VALID_AMOUNT, VALID_PAID_AT);
+        List<PaymentEmployeeDto> items = List.of(singleItem);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployee(items);
+
+        // then
+        assertThat(result.totalAmount()).isEqualTo(VALID_AMOUNT);
+        assertThat(result.items()).hasSize(1).containsExactly(singleItem);
+    }
+
+    @Test
+    void shouldCalculateCorrectTotalAmountForMultipleItems() {
+        // given
+        BigDecimal secondAmount = new BigDecimal("2500.00");
+        BigDecimal expectedTotal = VALID_AMOUNT.add(secondAmount);
+
+        PaymentEmployeeDto firstItem = buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME,
+                VALID_CUI, VALID_AMOUNT, VALID_PAID_AT);
+        PaymentEmployeeDto secondItem = buildPaymentEmployeeDto(2L, "Dr. Juan Perez",
+                "9876543210987", secondAmount, VALID_PAID_AT.plusSeconds(3600));
+
+        List<PaymentEmployeeDto> items = List.of(firstItem, secondItem);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployee(items);
+
+        // then
+        assertThat(result.totalAmount()).isEqualTo(expectedTotal);
+        assertThat(result.items()).hasSize(2).containsExactly(firstItem, secondItem);
+    }
+
+    @Test
+    void shouldHandleZeroAmountInItems() {
+        // given
+        BigDecimal zeroAmount = BigDecimal.ZERO;
+        PaymentEmployeeDto itemWithZeroAmount = buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME,
+                VALID_CUI, zeroAmount, VALID_PAID_AT);
+
+        List<PaymentEmployeeDto> items = List.of(itemWithZeroAmount);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployee(items);
+
+        // then
+        assertThat(result.totalAmount()).isEqualTo(zeroAmount);
+        assertThat(result.items()).hasSize(1).containsExactly(itemWithZeroAmount);
+    }
+
+    @Test
+    void shouldHandleNegativeAmountInItems() {
+        // given
+        BigDecimal negativeAmount = new BigDecimal("-500.00");
+        PaymentEmployeeDto itemWithNegativeAmount = buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME,
+                VALID_CUI, negativeAmount, VALID_PAID_AT);
+
+        List<PaymentEmployeeDto> items = List.of(itemWithNegativeAmount);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployee(items);
+
+        // then
+        assertThat(result.totalAmount()).isEqualTo(negativeAmount);
+        assertThat(result.items()).hasSize(1).containsExactly(itemWithNegativeAmount);
+    }
+
+    /**
+     * tests function getReportPayEmployeeInRange
+     */
+    @Test
+    void shouldReturnReportWithAllPaymentsWhenDatesAreNull() {
+        // given
+        List<PaymentEmployeeDto> expectedPayments = List.of(
+                buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME, VALID_CUI, VALID_AMOUNT, VALID_PAID_AT)
+        );
+
+        given(specialistPaymentRepository.findAllPaymentsProjected()).willReturn(expectedPayments);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployeeInRange(null, null);
+
+        // then
+        assertThat(result.items()).isEqualTo(expectedPayments);
+        assertThat(result.totalAmount()).isEqualTo(VALID_AMOUNT);
+        verify(specialistPaymentRepository).findAllPaymentsProjected();
+        verify(specialistPaymentRepository, never()).findAllPaymentsInRange(any(), any());
+    }
+
+    @Test
+    void shouldReturnReportWithPaymentsInRangeWhenValidDatesProvided() {
+        // given
+        List<PaymentEmployeeDto> expectedPayments = List.of(
+                buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME, VALID_CUI, VALID_AMOUNT, VALID_PAID_AT)
+        );
+
+        given(specialistPaymentRepository.findAllPaymentsInRange(VALID_START_INSTANT, VALID_END_INSTANT))
+                .willReturn(expectedPayments);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployeeInRange(
+                VALID_START_DATE, VALID_END_DATE);
+
+        // then
+        assertThat(result.items()).isEqualTo(expectedPayments);
+        assertThat(result.totalAmount()).isEqualTo(VALID_AMOUNT);
+        verify(specialistPaymentRepository).findAllPaymentsInRange(VALID_START_INSTANT, VALID_END_INSTANT);
+        verify(specialistPaymentRepository, never()).findAllPaymentsProjected();
+    }
+
+    @Test
+    void shouldReturnEmptyReportWhenNoPaymentsFoundInRange() {
+        // given
+        given(specialistPaymentRepository.findAllPaymentsInRange(VALID_START_INSTANT, VALID_END_INSTANT))
+                .willReturn(Collections.emptyList());
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployeeInRange(
+                VALID_START_DATE, VALID_END_DATE);
+
+        // then
+        assertThat(result.items()).isEmpty();
+        assertThat(result.totalAmount()).isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void shouldHandleStartDateNullAndEndDateProvided() {
+        // given
+        List<PaymentEmployeeDto> expectedPayments = List.of(
+                buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME, VALID_CUI, VALID_AMOUNT, VALID_PAID_AT)
+        );
+
+        given(specialistPaymentRepository.findAllPaymentsProjected()).willReturn(expectedPayments);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployeeInRange(null, VALID_END_DATE);
+
+        // then
+        assertThat(result.items()).isEqualTo(expectedPayments);
+        verify(specialistPaymentRepository).findAllPaymentsProjected();
+    }
+
+    @Test
+    void shouldHandleStartDateProvidedAndEndDateNull() {
+        // given
+        List<PaymentEmployeeDto> expectedPayments = List.of(
+                buildPaymentEmployeeDto(VALID_EMPLOYEE_ID, VALID_FULL_NAME, VALID_CUI, VALID_AMOUNT, VALID_PAID_AT)
+        );
+
+        given(specialistPaymentRepository.findAllPaymentsProjected()).willReturn(expectedPayments);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployeeInRange(VALID_START_DATE, null);
+
+        // then
+        assertThat(result.items()).isEqualTo(expectedPayments);
+        verify(specialistPaymentRepository).findAllPaymentsProjected();
+    }
+
+    @Test
+    void shouldHandleInvalidDateRangeWhereStartDateAfterEndDate() {
+        // given
+        List<PaymentEmployeeDto> emptyPayments = Collections.emptyList();
+
+        given(specialistPaymentRepository.findAllPaymentsInRange(any(), any()))
+                .willReturn(emptyPayments);
+
+        // when
+        ReportExpensePayEmployeeDto result = specialistPaymentService.getReportPayEmployeeInRange(
+                INVALID_START_DATE, VALID_END_DATE);
+
+        // then
+        assertThat(result.items()).isEmpty();
+        assertThat(result.totalAmount()).isEqualTo(BigDecimal.ZERO);
+    }
+
+
     // metodos para ayuda, como utils
+    private static PaymentEmployeeDto buildPaymentEmployeeDto(Long employeeId, String fullName,
+                                                              String cui, BigDecimal amount, Instant paidAt) {
+        return PaymentEmployeeDto.builder()
+                .employeeId(employeeId)
+                .fullName(fullName)
+                .cui(cui)
+                .amount(amount)
+                .paidAt(paidAt)
+                .build();
+    }
+
     private static PaymentPerSurgeryDto buildPaymentPerSurgeryDto() {
         return PaymentPerSurgeryDto.builder()
                 .id(VALID_SURGERY_ID)
