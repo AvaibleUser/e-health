@@ -1,0 +1,26 @@
+name: Build gatekeeper service
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - "build.gradle.kts"
+      - "gatekeeper/**"
+      - ".github/workflows/build-gatekeeper.yaml"
+      - ".github/workflows/build.yaml"
+      - "ci.Dockerfile"
+
+jobs:
+  build:
+    name: Build Jar and Dockerize
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
+    env:
+      EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+
+    with:
+      service: gatekeeper
+      auth: true

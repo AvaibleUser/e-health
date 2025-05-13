@@ -36,4 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 .env
-private-key.pem
+# private-key.pem
