@@ -1,6 +1,5 @@
 package org.ehealth.ward.controller.or;
 
-import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import org.ehealth.ward.domain.dto.or.surgery.SurgeryPaymentDto;

@@ -1,16 +1,23 @@
 package org.ehealth.ward.service.ward;
 
+import static org.ehealth.ward.domain.entity.finance.BillItemEntity.BillItemType.HOSPITALIZED;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.ward.admission.AddAdmissionDto;
 import org.ehealth.ward.domain.dto.ward.admission.AdmissionDto;
 import org.ehealth.ward.domain.dto.ward.admission.UpdateAdmissionDto;
+import org.ehealth.ward.domain.entity.finance.BillEntity;
+import org.ehealth.ward.domain.entity.finance.BillItemEntity;
 import org.ehealth.ward.domain.entity.ward.AdmissionEntity;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.entity.ward.RoomEntity;
 import org.ehealth.ward.domain.exception.RequestConflictException;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;
+import org.ehealth.ward.repository.finance.BillItemRepository;
+import org.ehealth.ward.repository.finance.BillRepository;
 import org.ehealth.ward.repository.ward.AdmissionRepository;
 import org.ehealth.ward.repository.ward.PatientRepository;
 import org.ehealth.ward.repository.ward.RoomRepository;
@@ -29,6 +36,8 @@ public class AdmissionService implements IAdmissionService {
     private final AdmissionRepository admissionRepository;
     private final PatientRepository patientRepository;
     private final RoomRepository roomRepository;
+    private final BillRepository billRepository;
+    private final BillItemRepository billItemRepository;
 
     @Override
     public Optional<AdmissionDto> findAdmissionByAdmitted(long patientId) {
@@ -69,14 +78,34 @@ public class AdmissionService implements IAdmissionService {
             throw new RequestConflictException("La sala seleccionada esta en mantenimiento");
         }
 
-        AdmissionEntity newAdmission = AdmissionEntity.builder()
+        AdmissionEntity dbAdmission = AdmissionEntity.builder()
                 .admissionDate(admission.admissionDate())
                 .dischargeDate(admission.dischargeDate())
                 .patient(patient)
                 .room(room)
                 .build();
 
-        admissionRepository.save(newAdmission);
+        BillEntity bill = billRepository.findByPatientIdAndIsClosedFalse(patientId, BillEntity.class)
+                .orElseGet(() -> {
+                    BillEntity dbBill = BillEntity.builder()
+                            .patient(patient)
+                            .isClosed(true)
+                            .isPaid(true)
+                            .build();
+
+                    billRepository.save(dbBill);
+                    return dbBill;
+                });
+
+        BillItemEntity item = BillItemEntity.builder()
+                .concept("Hospitalización en el cuarto '" + room.getNumber() + "' el " + admission.admissionDate())
+                .amount(BigDecimal.ONE)
+                .type(HOSPITALIZED)
+                .bill(bill)
+                .admission(dbAdmission)
+                .build();
+
+        billItemRepository.save(item);
     }
 
     @Override

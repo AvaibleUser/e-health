@@ -1,9 +1,8 @@
 package org.ehealth.ward.service.or;
 
-import lombok.RequiredArgsConstructor;
-import org.ehealth.ward.repository.or.SurgeryRepository;
-import org.springframework.stereotype.Service;
+import static org.ehealth.ward.domain.entity.finance.BillItemEntity.BillItemType.SURGERY;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,15 +10,22 @@ import org.ehealth.ward.domain.dto.or.surgery.AddSurgeryDto;
 import org.ehealth.ward.domain.dto.or.surgery.SurgeryDto;
 import org.ehealth.ward.domain.dto.or.surgery.SurgeryPaymentDto;
 import org.ehealth.ward.domain.dto.or.surgery.UpdateSurgeryDto;
+import org.ehealth.ward.domain.entity.finance.BillEntity;
+import org.ehealth.ward.domain.entity.finance.BillItemEntity;
 import org.ehealth.ward.domain.entity.finance.TariffEntity;
 import org.ehealth.ward.domain.entity.or.SurgeryEntity;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;
+import org.ehealth.ward.repository.finance.BillItemRepository;
+import org.ehealth.ward.repository.finance.BillRepository;
 import org.ehealth.ward.repository.finance.TariffRepository;
+import org.ehealth.ward.repository.or.SurgeryRepository;
 import org.ehealth.ward.repository.ward.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,8 @@ public class SurgeryService implements ISurgeryService {
     private final SurgeryRepository surgeryRepository;
     private final TariffRepository tariffRepository;
     private final PatientRepository patientRepository;
+    private final BillRepository billRepository;
+    private final BillItemRepository billItemRepository;
 
     @Override
     public Optional<SurgeryDto> findByIdAndPatientId(long id, long patientId) {
@@ -58,12 +66,34 @@ public class SurgeryService implements ISurgeryService {
                 .orElseThrow(() -> new ValueNotFoundException(
                         "No se encontro el tipo de paciente con id " + surgery.tariffId()));
 
-        surgeryRepository.save(SurgeryEntity.builder()
+        SurgeryEntity dbSurgery = SurgeryEntity.builder()
                 .performedDate(surgery.performedDate())
                 .description(surgery.description())
                 .patient(patient)
                 .tariff(tariff)
-                .build());
+                .build();
+
+        BillEntity bill = billRepository.findByPatientIdAndIsClosedFalse(patientId, BillEntity.class)
+                .orElseGet(() -> {
+                    BillEntity dbBill = BillEntity.builder()
+                            .patient(patient)
+                            .isClosed(true)
+                            .isPaid(true)
+                            .build();
+
+                    billRepository.save(dbBill);
+                    return dbBill;
+                });
+
+        BillItemEntity item = BillItemEntity.builder()
+                .concept("Cirugía de " + surgery.description() + " el " + surgery.performedDate())
+                .amount(BigDecimal.ONE)
+                .type(SURGERY)
+                .bill(bill)
+                .surgery(dbSurgery)
+                .build();
+
+        billItemRepository.save(item);
     }
 
     @Override
