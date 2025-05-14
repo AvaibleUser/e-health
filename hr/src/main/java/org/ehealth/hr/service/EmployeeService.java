@@ -20,6 +20,7 @@ import org.ehealth.hr.repository.AreaRepository;
 import org.ehealth.hr.repository.ContractRepository;
 import org.ehealth.hr.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class EmployeeService implements IEmployeeService {
 
 
     @Override
+    @Transactional
     public EmployeeResponseDto createEmployee(CreateEmployeeDto dto) {
         // Validar que no exista otro con mismo CUI o email
         if (employeeRepository.existsByEmail(dto.email()) || employeeRepository.existsByCui(dto.cui())) {
