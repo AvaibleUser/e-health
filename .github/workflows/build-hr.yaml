@@ -10,6 +10,7 @@ on:
       - "hr/**"
       - ".github/workflows/build-hr.yaml"
       - ".github/workflows/build.yaml"
+      - ".github/workflows/deploy.yaml"
       - "ci.Dockerfile"
 
 jobs:

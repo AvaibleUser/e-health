@@ -48,7 +48,7 @@ CREATE TABLE hr.vacation (
 
 CREATE TABLE hr.specialist_payment (
   id BIGSERIAL PRIMARY KEY,
-  surgery_id BIGINT NOT NULL REFERENCES hr.contract (id),
+  surgery_id BIGINT NOT NULL,
   amount NUMERIC(10,2) NOT NULL,
   paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   specialist_doctor_id BIGINT NOT NULL REFERENCES hr.employee (id),

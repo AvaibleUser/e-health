@@ -20,16 +20,19 @@ jobs:
     name: Cloud Run Deploy
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    env:
-      SERVICE_NAME: ${ echo ${{ github.event.workflow_run.name }} | cut -d ' ' -f2 | tr a-z A-Z }
-
     steps:
       # BEGIN - Enviroment setup
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Export environment variables
+        run: |
+          echo "SERVICE_NAME=$(echo '${{ github.event.workflow_run.name }}' | cut -d ' ' -f2 | tr a-z A-Z)" >> $GITHUB_ENV
+          echo "IMAGE=$(echo '${{ github.event.workflow_run.name }}' | cut -d ' ' -f2)" >> $GITHUB_ENV
+
       - name: Create .env file
-        run: echo ${{ secrets[format('{0}_ENV', env.SERVICE_NAME)] }} > .env 
+        run: |
+          echo "${{ secrets[format('{0}_ENV', env.SERVICE_NAME)] }}" > .env
 
       # END - Enviroment setup
 
@@ -49,9 +52,10 @@ jobs:
       # BEGIN - Deploy
       - name: Deploy to Cloud Run
         uses: "google-github-actions/deploy-cloudrun@v2"
+
         with:
-          service: ${{ secrets.GCP_SERVICE }}
-          image: "rockspringa/e-health:${{ env.SERVICE_NAME }}-latest"
+          service: ${{ env.IMAGE }}
+          image: "rockspringa/e-health:${{ env.IMAGE }}-latest"
           env_vars_file: .env
 
       # END - Deploy
