@@ -1,0 +1,21 @@
+name: Build frontdoor service
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - "build.gradle.kts"
+      - "frontdoor/**"
+      - ".github/workflows/build-frontdoor.yaml"
+      - ".github/workflows/build.yaml"
+      - "ci.Dockerfile"
+
+jobs:
+  build:
+    name: Build Jar and Dockerize
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
+    with:
+      service: frontdoor
