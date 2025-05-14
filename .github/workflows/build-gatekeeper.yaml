@@ -10,17 +10,18 @@ on:
       - "gatekeeper/**"
       - ".github/workflows/build-gatekeeper.yaml"
       - ".github/workflows/build.yaml"
+      - ".github/workflows/deploy.yaml"
       - "ci.Dockerfile"
+
+env:
+  EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+  EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
 jobs:
   build:
     name: Build Jar and Dockerize
     uses: ./.github/workflows/build.yaml
     secrets: inherit
-    env:
-      EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-
     with:
       service: gatekeeper
       auth: true
