@@ -6,6 +6,7 @@ import org.ehealth.hr.domain.dto.reports.ReportEmployeeContracts;
 import org.ehealth.hr.domain.entity.AreaEntity;
 import org.ehealth.hr.domain.entity.ContractEntity;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
+import org.ehealth.hr.domain.exception.RequestConflictException;
 import org.ehealth.hr.domain.exception.ValueNotFoundException;
 import org.ehealth.hr.repository.ContractRepository;
 import org.ehealth.hr.repository.EmployeeRepository;
@@ -32,7 +33,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,6 +171,31 @@ class ContractServiceTest {
         assertThat(result.getTerminationDescription()).isEqualTo("Terminated due to company restructuring");
     }
 
+    @Test
+    void shouldThrowRequestConflictExceptionWhenFinishDateIsBeforeStartDate() {
+        // given
+        ContractEntity existingContract = buildValidContract()
+                .toBuilder()
+                .startDate(LocalDate.of(2023, 1, 15)) // Fecha de inicio posterior
+                .build();
+
+        FinishContract invalidFinishRequest = FinishContract.builder()
+                .date(LocalDate.of(2023, 1, 10)) // Fecha anterior al inicio
+                .idContract(VALID_CONTRACT_ID)
+                .build();
+
+        given(contractRepository.findById(VALID_CONTRACT_ID))
+                .willReturn(Optional.of(existingContract));
+
+        // when / then
+        assertThatThrownBy(() -> contractService.finishContract(invalidFinishRequest))
+                .isInstanceOf(RequestConflictException.class)
+                .hasMessage("No se puede finalizar el contrato con una fecha anterior a su inicio.");
+
+        then(contractRepository).should().findById(VALID_CONTRACT_ID);
+        then(contractRepository).shouldHaveNoMoreInteractions();
+    }
+
     /**
      * tests function createContractWithEmployee
      */
@@ -221,6 +246,23 @@ class ContractServiceTest {
         assertThat(savedContract.getIgssDiscount()).isNull();
         assertThat(savedContract.getIrtraDiscount()).isNull();
         assertThat(savedContract.getStartDate()).isEqualTo(VALID_START_DATE);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenStartDateIsInFuture() {
+        // given
+        CreateEmployeeDto invalidDateDto = buildValidCreateEmployeeDto().toBuilder()
+                .startDate(LocalDate.now().plusDays(1)) // Fecha futura
+                .build();
+
+        EmployeeEntity validEmployee = buildValidEmployee();
+
+        // when / then
+        assertThatThrownBy(() -> contractService.createContractWithEmployee(invalidDateDto, validEmployee))
+                .isInstanceOf(RequestConflictException.class)
+                .hasMessage("No se puede registrar un contrato con una fecha de inicio mayor a la fecha actual.");
+
+        then(contractRepository).shouldHaveNoInteractions();
     }
 
     /**
@@ -371,6 +413,30 @@ class ContractServiceTest {
                 .hasMessage("El contrato antiguo no existe en planilla");
     }
 
+    @Test
+    void shouldThrowExceptionWhenPreviousContractStartDateIsAfterEndDate() {
+        // given
+        NewContractDto validDto = buildValidNewContractDto();
+        EmployeeEntity validEmployee = buildValidEmployee();
+
+        // Contrato con fecha de inicio posterior a la fecha de finalización (hoy-1)
+        ContractEntity invalidContract = buildValidContract(VALID_CONTRACT_ID)
+                .toBuilder()
+                .startDate(LocalDate.now().plusDays(1)) // Fecha futura
+                .terminationReason(null) // Contrato vigente
+                .build();
+
+        given(employeeRepository.findById(VALID_EMPLOYEE_ID))
+                .willReturn(Optional.of(validEmployee));
+        given(contractRepository.findById(VALID_CONTRACT_ID))
+                .willReturn(Optional.of(invalidContract));
+
+        // when / then
+        assertThatThrownBy(() -> contractService.createNewContract(validDto))
+                .isInstanceOf(RequestConflictException.class)
+                .hasMessage("No se puede finalizar el contrato con una fecha anterior a su inicio.");
+    }
+
     /**
      * tests function finishContract
      */
@@ -411,6 +477,28 @@ class ContractServiceTest {
         // when / then
         assertThatThrownBy(() -> contractService.finishContract(contractId, dto))
                 .isInstanceOf(ValueNotFoundException.class);
+    }
+
+    @Test
+    void shouldThrowRequestConflictExceptionWhenContractStartDateIsInFuture() {
+        // given
+        Long contractId = VALID_CONTRACT_ID;
+        FinishContractDto dto = buildFinishContractDto();
+        ContractEntity futureContract = buildValidContract(contractId)
+                .toBuilder()
+                .startDate(LocalDate.now().plusDays(1))
+                .build();
+
+        given(contractRepository.findById(VALID_CONTRACT_ID))
+                .willReturn(Optional.of(futureContract));
+
+        // when / then
+        assertThatThrownBy(() -> contractService.finishContract(contractId, dto))
+                .isInstanceOf(RequestConflictException.class)
+                .hasMessage("No se puede finalizar el contrato con una fecha anterior a su inicio.");
+
+        then(contractRepository).should().findById(VALID_CONTRACT_ID);
+        then(contractRepository).shouldHaveNoMoreInteractions();
     }
 
     /**
@@ -616,6 +704,28 @@ class ContractServiceTest {
         then(contractRepository).should().save(contractCaptor.capture());
 
         assertThat(contractCaptor.getValue().getEndDate()).isEqualTo(LocalDate.now());
+    }
+
+    @Test
+    void shouldThrowRequestConflictExceptionWhenContractStartDateIsInFutureDimisses() {
+        // given
+        Long contractId = VALID_CONTRACT_ID;
+        FinishContractDto dto = buildFinishContractDto();
+        ContractEntity futureContract = buildValidContract(contractId)
+                .toBuilder()
+                .startDate(LocalDate.now().plusDays(1))
+                .build();
+
+        given(contractRepository.findById(VALID_CONTRACT_ID))
+                .willReturn(Optional.of(futureContract));
+
+        // when / then
+        assertThatThrownBy(() -> contractService.dismissalWork(contractId, dto))
+                .isInstanceOf(RequestConflictException.class)
+                .hasMessage("No se puede despedir al empleado con una fecha anterior al inicio del contrato.");
+
+        then(contractRepository).should().findById(VALID_CONTRACT_ID);
+        then(contractRepository).shouldHaveNoMoreInteractions();
     }
 
     /**
