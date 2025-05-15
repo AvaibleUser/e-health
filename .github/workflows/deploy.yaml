@@ -52,7 +52,6 @@ jobs:
       # BEGIN - Deploy
       - name: Deploy to Cloud Run
         uses: "google-github-actions/deploy-cloudrun@v2"
-
         with:
           service: ${{ env.IMAGE }}
           image: "rockspringa/e-health:${{ env.IMAGE }}-latest"

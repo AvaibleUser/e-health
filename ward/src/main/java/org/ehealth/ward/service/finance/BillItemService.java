@@ -81,6 +81,7 @@ public class BillItemService implements IBillItemService {
                 .patient(patient)
                 .isClosed(true)
                 .isPaid(true)
+                .total(BigDecimal.valueOf(20))
                 .build();
 
         billRepository.save(dbBill);
@@ -110,7 +111,7 @@ public class BillItemService implements IBillItemService {
         Entry<BillItemType, Long> related = billItem.admissionId().map(admissionId -> entry(HOSPITALIZED, admissionId))
                 .or(() -> billItem.surgeryId().map(surgeryId -> entry(SURGERY, surgeryId)))
                 .or(() -> billItem.saleId().map(saleId -> entry(MEDICATION, saleId)))
-                .orElse(entry(CONSULTATION, null));
+                .orElse(entry(CONSULTATION, 0L));
 
         BillItemEntity dbBillItem = BillItemEntity.builder()
                 .concept(billItem.concept())
@@ -137,6 +138,11 @@ public class BillItemService implements IBillItemService {
                 break;
 
             default:
+                if (bill.getTotal() == null) {
+                    bill.setTotal(BigDecimal.valueOf(20));
+                } else {
+                    bill.setTotal(bill.getTotal().add(BigDecimal.valueOf(20)));
+                }
                 break;
         }
 

@@ -10,7 +10,6 @@ jobs:
   test:
     name: Spring Boot Test
     runs-on: ubuntu-latest
-    environment: "${{ github.ref_name == 'main' && 'prod' || 'dev' }}"
     env:
       EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}

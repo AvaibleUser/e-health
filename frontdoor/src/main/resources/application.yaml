@@ -21,7 +21,7 @@ spring:
     name: FrontDoor
 
   jackson:
-    time-zone: UTC
+    time-zone: "America/Guatemala"
     mapper:
       "[ACCEPT_CASE_INSENSITIVE_ENUMS]": true
 

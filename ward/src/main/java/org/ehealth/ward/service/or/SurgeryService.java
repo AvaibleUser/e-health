@@ -93,7 +93,14 @@ public class SurgeryService implements ISurgeryService {
                 .surgery(dbSurgery)
                 .build();
 
+        if (bill.getTotal() == null) {
+            bill.setTotal(tariff.getPrice());
+        } else {
+            bill.setTotal(bill.getTotal().add(tariff.getPrice()));
+        }
+
         billItemRepository.save(item);
+        billRepository.save(bill);
     }
 
     @Override
