@@ -61,10 +61,10 @@ public class RoomService implements IRoomService {
     @Override
     public RoomResponseDto updateName(Long id, CreateRoom dto) {
         var area = roomRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Area no encontrada con el id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Habitacion no encontrada con el id " + id));
 
-        if (roomRepository.existsByNumberIgnoreCase(dto.number())) {
-            throw new BusinessException("El area con ese nombre ya existe");
+        if (!area.getNumber().equalsIgnoreCase(dto.number()) && roomRepository.existsByNumberIgnoreCase(dto.number())) {
+            throw new BusinessException("El Numero de Habitacion ya existe");
         }
 
         area.setNumber(dto.number().trim());
