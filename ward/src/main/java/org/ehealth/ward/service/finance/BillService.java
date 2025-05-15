@@ -1,12 +1,21 @@
 package org.ehealth.ward.service.finance;
 
+import static org.ehealth.ward.domain.entity.finance.BillItemEntity.BillItemType.HOSPITALIZED;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.ehealth.ward.domain.dto.finance.bill.BillDto;
+import org.ehealth.ward.domain.dto.finance.bill.BillDto.NativeBillDto;
 import org.ehealth.ward.domain.dto.finance.bill.UpdateBillDto;
 import org.ehealth.ward.domain.entity.finance.BillEntity;
+import org.ehealth.ward.domain.entity.finance.BillItemEntity;
+import org.ehealth.ward.domain.entity.ward.AdmissionEntity;
 import org.ehealth.ward.domain.entity.ward.PatientEntity;
+import org.ehealth.ward.domain.exception.RequestConflictException;
 import org.ehealth.ward.domain.exception.ValueNotFoundException;
 import org.ehealth.ward.repository.finance.BillRepository;
 import org.ehealth.ward.repository.ward.PatientRepository;
@@ -32,7 +41,10 @@ public class BillService implements IBillService {
 
     @Override
     public List<BillDto> findOpenPatientBills(long patientId) {
-        return billRepository.findAllByPatientIdAndIsClosedFalse(patientId, BillDto.class);
+        return billRepository.findAllByPatientIdAndIsClosedFalse(patientId)
+                .stream()
+                .map(BillDto::new)
+                .toList();
     }
 
     @Override
@@ -67,19 +79,42 @@ public class BillService implements IBillService {
                 .orElseThrow(() -> new ValueNotFoundException("No se encontro la factura"));
 
         if (dbBill.isClosed()) {
-            throw new ValueNotFoundException("La factura ya está cerrada");
+            throw new RequestConflictException("La factura ya está cerrada");
         }
 
-        bill.isClosed().ifPresent(dbBill::setClosed);
-        bill.isPaid().ifPresent(dbBill::setPaid);
-
-        if (dbBill.isClosed()) {
+        if (bill.isClosed().orElse(false)) {
             Hibernate.initialize(dbBill.getBillItems());
             if (dbBill.getBillItems().isEmpty()) {
                 billRepository.delete(dbBill);
                 return;
             }
+            if (dbBill.getBillItems()
+                    .stream()
+                    .filter(b -> {
+                        if (b.getType() == HOSPITALIZED) {
+                            Hibernate.initialize(b.getAdmission());
+                            return true;
+                        }
+                        return false;
+                    })
+                    .map(BillItemEntity::getAdmission)
+                    .filter(Objects::nonNull)
+                    .map(AdmissionEntity::getDischargeDate)
+                    .anyMatch(d -> d == null || d.isAfter(LocalDate.now()))) {
+                throw new RequestConflictException(
+                        "La factura no puede ser cerrada porque tiene hospitalizaciones pendientes");
+            }
+            billRepository.findAllByPatientIdAndIsClosedFalse(patientId)
+                    .stream()
+                    .findAny()
+                    .map(NativeBillDto::total)
+                    .map(Number::doubleValue)
+                    .map(BigDecimal::valueOf)
+                    .ifPresent(dbBill::setTotal);
         }
+
+        bill.isClosed().ifPresent(dbBill::setClosed);
+        bill.isPaid().ifPresent(dbBill::setPaid);
 
         billRepository.save(dbBill);
     }

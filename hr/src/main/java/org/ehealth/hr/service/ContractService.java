@@ -7,6 +7,7 @@ import org.ehealth.hr.domain.dto.reports.HistoryEmployeeContractsDto;
 import org.ehealth.hr.domain.dto.reports.ReportEmployeeContracts;
 import org.ehealth.hr.domain.entity.ContractEntity;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
+import org.ehealth.hr.domain.exception.RequestConflictException;
 import org.ehealth.hr.domain.exception.ValueNotFoundException;
 import org.ehealth.hr.repository.ContractRepository;
 import org.ehealth.hr.repository.EmployeeRepository;
@@ -31,23 +32,37 @@ public class ContractService implements IContractService {
         ContractEntity contract = this.contractRepository.findById(finishContract.idContract())
                 .orElseThrow(() -> new ValueNotFoundException("El contrato que se intenta finalizar no existe en planilla"));
 
+        // Validar que la fecha de finalización no sea anterior a la fecha de inicio
+        if (contract.getStartDate().isAfter(finishContract.date())) {
+            throw new RequestConflictException("No se puede finalizar el contrato con una fecha anterior a su inicio.");
+        }
+
         contract.setEndDate(finishContract.date());
         contract.setTerminationReason(finishContract.terminationReason());
         contract.setTerminationDescription(finishContract.description());
         return contractRepository.save(contract);
     }
 
+
     @Override
     public void createContractWithEmployee(CreateEmployeeDto dto, EmployeeEntity employee) {
+        LocalDate startDate = dto.startDate();
+        LocalDate today = LocalDate.now();
+
+        // Validar que la fecha de inicio no sea futura
+        if (startDate.isAfter(today)) {
+            throw new RequestConflictException("No se puede registrar un contrato con una fecha de inicio mayor a la fecha actual.");
+        }
 
         contractRepository.save(ContractEntity.builder()
                 .salary(dto.salary())
                 .igssDiscount(dto.igssDiscount())
                 .irtraDiscount(dto.irtraDiscount())
-                .startDate(dto.startDate())
+                .startDate(startDate)
                 .employee(employee)
                 .build());
     }
+
 
     @Override
     public ContractDto getContractByEmployeeId(Long employeeId) {
@@ -66,9 +81,14 @@ public class ContractService implements IContractService {
 
         // Calcular fecha de inicio: hoy
         LocalDate today = LocalDate.now();
+        LocalDate endDate = today.minusDays(1);
 
         // solo si el contrato esta vigenete
         if (previousContract.getTerminationReason() == null) {
+            if (previousContract.getStartDate().isAfter(endDate)) {
+                throw new RequestConflictException("No se puede finalizar el contrato con una fecha anterior a su inicio.");
+            }
+
             previousContract.setEndDate(today.minusDays(1));
             previousContract.setTerminationReason(ContractEntity.TerminationReason.NUEVO_CONTRATO);
             previousContract.setTerminationDescription("El contrato terminó por un nuevo contrato registrado el " + today);
@@ -90,12 +110,22 @@ public class ContractService implements IContractService {
     @Override
     @Transactional
     public void finishContract(Long idContract, FinishContractDto finishContractDto) {
+        ContractEntity contract = this.contractRepository.findById(idContract)
+                .orElseThrow(() -> new ValueNotFoundException("El contrato no existe en planilla"));
+
+        LocalDate today = LocalDate.now();
+
+        // Validar que no se pueda finalizar con una fecha anterior a la de inicio
+        if (contract.getStartDate().isAfter(today)) {
+            throw new RequestConflictException("No se puede finalizar el contrato con una fecha anterior a su inicio.");
+        }
+
         FinishContract finishContract = FinishContract
                 .builder()
                 .terminationReason(ContractEntity.TerminationReason.FIN_CONTRATO)
                 .description(finishContractDto.description())
                 .idContract(idContract)
-                .date(LocalDate.now())
+                .date(today)
                 .build();
 
         this.finishContract(finishContract);
@@ -137,17 +167,28 @@ public class ContractService implements IContractService {
 
     @Override
     @Transactional
-    public void dismissalWork(Long idContract, FinishContractDto finishContractDto){
+    public void dismissalWork(Long idContract, FinishContractDto finishContractDto) {
+        ContractEntity contract = this.contractRepository.findById(idContract)
+                .orElseThrow(() -> new ValueNotFoundException("El contrato no existe en planilla"));
+
+        LocalDate today = LocalDate.now();
+
+        // Validar que la fecha de despido no sea anterior a la fecha de inicio
+        if (contract.getStartDate().isAfter(today)) {
+            throw new RequestConflictException("No se puede despedir al empleado con una fecha anterior al inicio del contrato.");
+        }
+
         FinishContract finishContract = FinishContract
                 .builder()
                 .terminationReason(ContractEntity.TerminationReason.DESPIDO)
                 .description(finishContractDto.description())
                 .idContract(idContract)
-                .date(LocalDate.now())
+                .date(today)
                 .build();
 
         this.finishContract(finishContract);
     }
+
 
     @Override
     public List<ContractDto> findAllContractsOrderedByCreationDate(Long employeeId) {

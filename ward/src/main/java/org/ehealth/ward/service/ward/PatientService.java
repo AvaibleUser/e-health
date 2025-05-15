@@ -3,6 +3,7 @@ package org.ehealth.ward.service.ward;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.Generated;
 import org.apache.commons.lang3.StringUtils;
 import org.ehealth.ward.domain.dto.ward.patient.AddPatientDto;
 import org.ehealth.ward.domain.dto.ward.patient.PatientDto;
@@ -67,11 +68,13 @@ public class PatientService implements IPatientService {
     }
 
     @Override
+    @Generated
     public List<PatientDto> findAll(){
         return this.patientRepository.findAllByOrderByCreatedAtDesc(PatientDto.class);
     }
 
     @Override
+    @Generated
     public boolean existPatientById(Long id){
         return patientRepository.existsById(id);
     }

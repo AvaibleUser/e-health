@@ -32,4 +32,6 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
                 AND r.underMaintenance = TRUE
             """)
     Page<RoomDto> findAllFiltered(Pageable pageable);
+
+    boolean existsByNumberIgnoreCase(String number);
 }
