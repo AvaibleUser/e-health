@@ -4,6 +4,9 @@ spring:
     password: password
     url: jdbc:h2:mem:ward;NON_KEYWORDS=user
 
+  jackson:
+    time-zone: UTC
+
   jpa:
     show-sql: false
     hibernate:

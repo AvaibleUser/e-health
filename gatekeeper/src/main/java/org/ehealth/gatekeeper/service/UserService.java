@@ -92,20 +92,7 @@ public class UserService implements IUserService {
                 .filter(emp -> userByCui.containsKey(emp.cui()))
                 .map(emp -> {
                     UserDto user = userByCui.get(emp.cui());
-                    return UserEmployeeDto.builder()
-                            .id(user.id())
-                            .active(user.active())
-                            .roleName(user.roleName())
-                            .createdAt(user.createdAt())
-                            .updatedAt(user.updatedAt())
-                            .employeeId(emp.id())
-                            .fullName(emp.fullName())
-                            .cui(emp.cui())
-                            .phone(emp.phone())
-                            .email(user.email())
-                            .isSpecialist(emp.isSpecialist())
-                            .areaName(emp.areaName())
-                            .build();
+                    return new UserEmployeeDto(user, emp);
                 })
                 .toList();
     }
