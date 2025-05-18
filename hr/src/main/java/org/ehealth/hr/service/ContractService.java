@@ -1,6 +1,8 @@
 package org.ehealth.hr.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import org.ehealth.hr.client.AuthClient;
 import org.ehealth.hr.domain.dto.FinishContract;
 import org.ehealth.hr.domain.dto.*;
 import org.ehealth.hr.domain.dto.reports.HistoryEmployeeContractsDto;
@@ -26,6 +28,7 @@ public class ContractService implements IContractService {
 
     private final ContractRepository contractRepository;
     private final EmployeeRepository employeeRepository;
+    private final AuthClient authClient;
 
     @Override
     public ContractEntity finishContract(FinishContract finishContract) {
@@ -120,6 +123,12 @@ public class ContractService implements IContractService {
             throw new RequestConflictException("No se puede finalizar el contrato con una fecha anterior a su inicio.");
         }
 
+        try {
+            this.authClient.updateUserActive(finishContractDto.cui());
+        } catch (FeignException e) {
+            // igual se realiza el fin del contrato, no necesariamente existen empleados con user
+        }
+
         FinishContract finishContract = FinishContract
                 .builder()
                 .terminationReason(ContractEntity.TerminationReason.FIN_CONTRATO)
@@ -177,6 +186,13 @@ public class ContractService implements IContractService {
         if (contract.getStartDate().isAfter(today)) {
             throw new RequestConflictException("No se puede despedir al empleado con una fecha anterior al inicio del contrato.");
         }
+
+        try {
+            this.authClient.updateUserActive(finishContractDto.cui());
+        } catch (FeignException e) {
+            // igual se realiza el fin del contrato, no necesariamente existen empleados con user
+        }
+
 
         FinishContract finishContract = FinishContract
                 .builder()

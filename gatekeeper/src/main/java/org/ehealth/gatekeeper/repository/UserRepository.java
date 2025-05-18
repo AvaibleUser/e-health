@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     <T> List<T> findAllByActiveFalseOrderByCreatedAtDesc(Class<T> type);
 
+    UserEntity findByCui(String cui);
+
 }

@@ -52,4 +52,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PutMapping("/cui/{cui}")
+    public void updateCUI(@PathVariable String cui) {
+        this.userService.updateUserActiveCui(cui);
+    }
+
 }
