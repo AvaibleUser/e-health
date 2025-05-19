@@ -2,6 +2,7 @@ package org.ehealth.hr.service;
 
 import org.ehealth.hr.domain.dto.CreateEmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
+import org.ehealth.hr.domain.dto.UpdateEmployeeDto;
 import org.ehealth.hr.domain.dto.reports.ReportAssignedEmployeeDto;
 import org.ehealth.hr.domain.entity.EmployeeEntity;
 import org.ehealth.hr.domain.dto.EmployeeDto;
@@ -20,4 +21,5 @@ public interface IEmployeeService {
     List<EmployeeDto> findAssignableEmployees();
     ReportAssignedEmployeeDto getReportAssignedEmployeeInRange(Integer filter, String startDate, String endDate);
     boolean existEmployeeById(Long id);
+    void updateEmployeeArea(Long employeeId, UpdateEmployeeDto updateEmployeeDto);
 }

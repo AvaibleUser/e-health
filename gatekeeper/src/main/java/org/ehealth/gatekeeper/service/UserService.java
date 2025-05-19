@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import lombok.Generated;
 import org.ehealth.gatekeeper.client.EmployeeClient;
 import org.ehealth.gatekeeper.domain.dto.AddUserDto;
 import org.ehealth.gatekeeper.domain.dto.UserDto;
@@ -132,6 +133,19 @@ public class UserService implements IUserService {
         user.setRole(role);
 
         userRepository.save(user);
+    }
+
+    @Override
+    @Generated
+    public void updateUserActiveCui(String cui) {
+        boolean exit = this.userRepository.existsByCui(cui);
+
+        if (exit){
+            UserEntity user = this.userRepository.findByCui(cui);
+            user.setActive(false);
+            userRepository.save(user);
+        }
+
     }
 
 

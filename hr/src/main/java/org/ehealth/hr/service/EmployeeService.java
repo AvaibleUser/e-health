@@ -4,10 +4,7 @@ import feign.FeignException;
 import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.ehealth.hr.client.PatientClient;
-import org.ehealth.hr.domain.dto.ContractDto;
-import org.ehealth.hr.domain.dto.CreateEmployeeDto;
-import org.ehealth.hr.domain.dto.EmployeeDto;
-import org.ehealth.hr.domain.dto.EmployeeResponseDto;
+import org.ehealth.hr.domain.dto.*;
 import org.ehealth.hr.domain.dto.reports.AssignedDto;
 import org.ehealth.hr.domain.dto.reports.AssignedEmployeeReportDto;
 import org.ehealth.hr.domain.dto.reports.HistoryAssignedEmployee;
@@ -185,6 +182,21 @@ public class EmployeeService implements IEmployeeService {
     @Generated
     public boolean existEmployeeById(Long id) {
         return employeeRepository.existsById(id);
+    }
+
+    @Override
+    @Generated
+    public void updateEmployeeArea(Long employeeId, UpdateEmployeeDto updateEmployeeDto){
+        AreaEntity area = areaRepository.findById(updateEmployeeDto.areId())
+                .orElseThrow(() -> new RequestConflictException("Área no encontrada con ID: " + updateEmployeeDto.areId()));
+
+        EmployeeEntity employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RequestConflictException("Empleado no encontrado para editar"));
+
+        employee.setArea(area);
+        employee.setPhone(updateEmployeeDto.phone());
+        employee.setEmail(updateEmployeeDto.email());
+        employeeRepository.save(employee);
     }
 
 }
