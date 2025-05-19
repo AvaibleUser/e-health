@@ -185,6 +185,7 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    @Generated
     public void updateEmployeeArea(Long employeeId, UpdateEmployeeDto updateEmployeeDto){
         AreaEntity area = areaRepository.findById(updateEmployeeDto.areId())
                 .orElseThrow(() -> new RequestConflictException("Área no encontrada con ID: " + updateEmployeeDto.areId()));

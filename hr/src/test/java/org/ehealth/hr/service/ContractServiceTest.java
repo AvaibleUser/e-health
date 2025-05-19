@@ -1,5 +1,6 @@
 package org.ehealth.hr.service;
 
+import org.ehealth.hr.client.AuthClient;
 import org.ehealth.hr.domain.dto.*;
 import org.ehealth.hr.domain.dto.reports.HistoryEmployeeContractsDto;
 import org.ehealth.hr.domain.dto.reports.ReportEmployeeContracts;
@@ -25,8 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -92,6 +92,10 @@ class ContractServiceTest {
 
     @Mock
     private EmployeeRepository employeeRepository;
+
+    @Mock
+    private AuthClient authClient;
+
 
     @InjectMocks
     private ContractService contractService;
@@ -452,10 +456,13 @@ class ContractServiceTest {
         given(contractRepository.save(any(ContractEntity.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
+
+        doNothing().when(authClient).updateUserActive(dto.cui());
+
         // when
         contractService.finishContract(contractId, dto);
 
-        // then - Verificar que se llamó al método principal con los parámetros correctos
+        // then
         ArgumentCaptor<ContractEntity> contractCaptor = ArgumentCaptor.forClass(ContractEntity.class);
         then(contractRepository).should().save(contractCaptor.capture());
 
@@ -464,6 +471,7 @@ class ContractServiceTest {
         assertThat(savedContract.getTerminationReason()).isEqualTo(ContractEntity.TerminationReason.FIN_CONTRATO);
         assertThat(savedContract.getTerminationDescription()).isEqualTo(TERMINATION_DESCRIPTION);
     }
+
 
     @Test
     void shouldPropagateExceptionWhenMainMethodFails() {
@@ -590,8 +598,8 @@ class ContractServiceTest {
         // Validar contrato terminado
         assertThat(terminated.getTerminationReason()).isEqualTo(ContractEntity.TerminationReason.REDUCCION_SALARIAL);
 
-        // Validar nuevo contrato (si quieres, puedes agregar más validaciones)
-        assertThat(newContract.getSalary()).isEqualTo(UPDATED_SALARY); // este campo debería reflejar el nuevo salario
+        // Validar nuevo contrato
+        assertThat(newContract.getSalary()).isEqualTo(UPDATED_SALARY);
         assertThat(newContract.getStartDate()).isEqualTo(LocalDate.now());
         assertThat(newContract.getEmployee()).isEqualTo(terminatedContract.getEmployee());
     }
@@ -657,6 +665,8 @@ class ContractServiceTest {
         given(contractRepository.save(any(ContractEntity.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
 
+        doNothing().when(authClient).updateUserActive(dto.cui());
+
         // when
         contractService.dismissalWork(contractId, dto);
 
@@ -695,6 +705,8 @@ class ContractServiceTest {
                 .willReturn(Optional.of(existingContract));
         given(contractRepository.save(any(ContractEntity.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
+
+        doNothing().when(authClient).updateUserActive(dto.cui());
 
         // when
         contractService.dismissalWork(contractId, dto);
@@ -1252,7 +1264,7 @@ class ContractServiceTest {
     }
 
     private FinishContractDto buildFinishContractDto() {
-        return new FinishContractDto(TERMINATION_DESCRIPTION);
+        return new FinishContractDto(TERMINATION_DESCRIPTION, EMPLOYEE_CUI);
     }
 
     private UpdateSalaryDto buildUpdateSalaryDto(boolean isIncrement) {
