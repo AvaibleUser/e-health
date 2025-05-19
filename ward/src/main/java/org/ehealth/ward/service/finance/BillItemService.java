@@ -123,13 +123,13 @@ public class BillItemService implements IBillItemService {
         switch (related.getKey()) {
             case HOSPITALIZED:
                 dbBillItem.setAdmission(admissionRepository
-                        .findByIdAndPatientId(patientId, related.getValue(), AdmissionEntity.class)
+                        .findByIdAndPatientId(related.getValue(), patientId, AdmissionEntity.class)
                         .orElseThrow(() -> new ValueNotFoundException("No se pudo encontrar la hospitalizacion")));
                 break;
 
             case SURGERY:
                 dbBillItem.setSurgery(surgeryRepository
-                        .findByIdAndPatientId(patientId, related.getValue(), SurgeryEntity.class)
+                        .findByIdAndPatientId(related.getValue(), patientId, SurgeryEntity.class)
                         .orElseThrow(() -> new ValueNotFoundException("No se pudo encontrar la cirugía")));
                 break;
 
