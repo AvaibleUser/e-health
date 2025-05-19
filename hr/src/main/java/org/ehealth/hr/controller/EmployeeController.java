@@ -2,20 +2,16 @@ package org.ehealth.hr.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.ehealth.hr.domain.dto.CreateEmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeDto;
 import org.ehealth.hr.domain.dto.EmployeeResponseDto;
+import org.ehealth.hr.domain.dto.UpdateEmployeeDto;
 import org.ehealth.hr.domain.dto.reports.ReportAssignedEmployeeDto;
 import org.ehealth.hr.service.IEmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +89,10 @@ public class EmployeeController {
         return ResponseEntity.ok(report);
     }
 
-
+    @PutMapping("/{employeeId}")
+    public ResponseEntity<Void> updateAreaEmployee(@PathVariable Long employeeId, @RequestBody @Valid UpdateEmployeeDto dto) {
+        this.employeeService.updateEmployeeArea(employeeId, dto);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 
 }

@@ -50,6 +50,12 @@ class ContractControllerTest {
     private static final LocalDate START_DATE = LocalDate.of(2024, 1, 1);
     private static final LocalDate END_DATE = LocalDate.of(2024, 12, 31);
 
+    private static final String DESCRIPTION_FINISH = "termination";
+    private static final String DESCRIPTION = "despido";
+    private static final String CUI = "123456789";
+
+
+
     @Test
     void getContractByEmployeeId_shouldReturnContract() throws Exception {
         // given
@@ -89,7 +95,7 @@ class ContractControllerTest {
     @Test
     void finishContract_shouldReturnOk() throws Exception {
         // given
-        FinishContractDto dto = new FinishContractDto("termination");
+        FinishContractDto dto = new FinishContractDto(DESCRIPTION_FINISH, CUI);
 
         // when
         mockMvc.perform(patch("/api/hr/v1/contracts/finish/{contractId}", CONTRACT_ID)
@@ -125,7 +131,7 @@ class ContractControllerTest {
     @Test
     void dismissalWork_shouldReturnOk() throws Exception {
         //given
-        FinishContractDto dto = new FinishContractDto("despido");
+        FinishContractDto dto = new FinishContractDto(DESCRIPTION,CUI);
 
         //when
         mockMvc.perform(patch("/api/hr/v1/contracts/dismissal-work/{contractId}", CONTRACT_ID)

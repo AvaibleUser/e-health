@@ -22,4 +22,6 @@ public interface IUserService {
     void updateUserActive(Long userId, boolean active);
 
     void updateRole(Long userId, Long roleId);
+
+    void updateUserActiveCui(String cui);
 }
